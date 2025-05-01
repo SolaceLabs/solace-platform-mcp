@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "solace-sempv2-config": {
+      "command": "python3",
+      "args": ["<add full path to file>/solace_monitoring_mcp_server.py"],
+      "env": {
+        "OPENAPI_SPEC": "semp-v2-swagger-monitor.json",
+        "OPENAPI_SPEC_URL": "",
+        "SOLACE_SEMPV2_BASE_URL": "http://localhost:8080",
+        "SOLACE_SEMPV2_USERNAME": "admin",
+        "SOLACE_SEMPV2_PASSWORD": "admin",
+        "SOLACE_SEMPV2_AUTH_METHOD": "basic",
+        "SOLACE_SEMPV2_BEARER_TOKEN": "",
+        "MCP_API_INCLUDE_METHODS": "",
+        "MCP_API_EXCLUDE_METHODS": "",
+        "MCP_API_INCLUDE_TAGS": "",
+        "MCP_API_EXCLUDE_TAGS": "",
+        "MCP_API_INCLUDE_PATHS": "",
+        "MCP_API_EXCLUDE_PATHS": "",
+        "MCP_LOG_FILE": "solace_mcp_server.log",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_DISABLE": "false"
+      },
+      "disabled": false,
+      "timeout": 60,
+      "transportType": "stdio",
+      "autoApprove": [
+        "list_tools"
+      ]
+    }
+  }
+}
