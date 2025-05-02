@@ -19,7 +19,7 @@ This server enables seamless integration between Solace Agent Mesh (SAM) and Sol
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.10+
 - Required Python packages:
   - `requests` 
   - `python-dotenv`
@@ -36,7 +36,7 @@ The easiest way to install is to use the provided installation script:
 ```
 
 This script will:
-1. Check if Python 3.7+ is installed.
+1. Check if Python 3.10+ is installed.
 2. Install the required Python packages (`requests` and `mcp`).
 3. Make all Python scripts executable.
 

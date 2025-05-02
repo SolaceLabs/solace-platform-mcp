@@ -11,7 +11,7 @@ fi
 
 # Check Python version
 python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-required_version="3.7"
+required_version="3.10"
 
 # Fix for version comparison - use proper version comparison
 python3 -c "import sys; sys.exit(0 if tuple(map(int, '$python_version'.split('.'))) >= tuple(map(int, '$required_version'.split('.'))) else 1)"
