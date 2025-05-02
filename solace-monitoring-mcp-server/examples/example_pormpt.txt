@@ -1,0 +1,19 @@
+
+Prompt-1: Get the Solace message broker information.
+
+Prompt-2: Can you list all the client profile configured on Solace message vpn "default"
+
+Prompt-3: Create a Solace message vpn named my-vpn2.
+
+Prompt-4: On Solace message vpn my-vpn2, Create 3 non-exclusive queues with prefix workflow_ and suffix index from 0 to 2 and
+then add subscription to the respective queue with the same name as queue name.
+
+Prompt-5: summarize the configuration of Solace message vpn my-vpn2
+
+Prompt-6: Delete the Solace message vpn my-vpn2, but first you will have to delete all the queues that exist on the my-vpn2.
+
+Prompt-7: On Solace message vpn my-vpn2, create a new client profile for my jcsmp consumer application.
+
+
+Custom LLM Instruction:
+For Solace SEMPv2 MCP Server related tasks, summarize the information so that it is easy to understand.
