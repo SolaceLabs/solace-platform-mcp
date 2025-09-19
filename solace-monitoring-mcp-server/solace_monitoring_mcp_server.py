@@ -406,6 +406,20 @@ class SolaceSempv2McpServer:
             if body_required:
                 required.append('body')
 
+        # Add optional broker override parameters
+        properties['broker_url'] = {
+            "type": "string",
+            "description": "Optional: The base URL of a specific Solace broker to target for this request (e.g., 'http://192.168.1.10:8080')."
+        }
+        properties['broker_username'] = {
+            "type": "string",
+            "description": "Optional: The management username for the target broker."
+        }
+        properties['broker_password'] = {
+            "type": "string",
+            "description": "Optional: The management password for the target broker."
+        }
+
         # Create the final schema
         schema = {
             "type": "object",
@@ -530,8 +544,13 @@ class SolaceSempv2McpServer:
 
     def _invoke_tool(self, tool: Tool, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Dynamically invoke a tool by making the appropriate API request"""
+        # Determine broker details, using overrides if provided
+        base_url = arguments.get('broker_url', self.config.base_url)
+        username = arguments.get('broker_username', self.config.username)
+        password = arguments.get('broker_password', self.config.password)
+
         # Prepare the URL with path parameters
-        url = self._prepare_url(tool.path, arguments)
+        url = self._prepare_url(base_url, tool.path, arguments)
 
         # Prepare query parameters
         query_params = self._prepare_query_params(tool.parameters, arguments)
@@ -546,8 +565,8 @@ class SolaceSempv2McpServer:
 
         # Prepare auth based on configured authentication method
         auth = None
-        if self.config.auth_method == "basic" and self.config.username and self.config.password:
-            auth = (self.config.username, self.config.password)
+        if self.config.auth_method == "basic" and username and password:
+            auth = (username, password)
         elif self.config.auth_method == "bearer" and self.config.bearer_token:
             headers["Authorization"] = f"Bearer {self.config.bearer_token}"
 
@@ -560,9 +579,9 @@ class SolaceSempv2McpServer:
             # Re-raising with a message that includes "API request failed" for test compatibility
             raise Exception(f"API request failed: {str(e)}")
 
-    def _prepare_url(self, path_template: str, arguments: Dict[str, Any]) -> str:
+    def _prepare_url(self, base_url: str, path_template: str, arguments: Dict[str, Any]) -> str:
         """Prepare the URL by replacing path parameters with values from arguments"""
-        url = self.base_url + path_template
+        url = base_url + path_template
 
         # Replace path parameters
         for arg_name, arg_value in arguments.items():
