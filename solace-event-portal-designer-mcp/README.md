@@ -1,6 +1,6 @@
 # Solace Event Portal Designer MCP Server
 
-> ⚠️ **RELEASE CANDIDATE** - Version: 0.1.0-rc1
+> ⚠️ **RELEASE CANDIDATE** - Version: 0.1.0rc1
 
 This project provides a Model Context Protocol (MCP) server for interacting with the Solace Event Portal Designer API. Designer enables you to design and view all of the objects in your event-driven architecture (EDA). You can use Designer to create events, associate payload schemas, specify the events that applications publish and subscribe to, and create event APIs and Event API Products to share events. See the [Event Portal Designer Documentation](https://docs.solace.com/Cloud/Event-Portal/event-portal-designer-tool.htm) for more info about Designer.
 
@@ -8,7 +8,7 @@ This project provides a Model Context Protocol (MCP) server for interacting with
 
 ### From PyPI (when published)
 ```bash
-pip install solace-event-portal-designer-mcp==0.1.0-rc1
+pip install solace-event-portal-designer-mcp==0.1.0rc1
 ```
 
 ### From Source (Development)
