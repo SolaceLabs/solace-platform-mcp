@@ -27,6 +27,12 @@ dependencies = [
     "fastmcp>=2.10.5,<3.0.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/SolaceLabs/solace-platform-mcp"
 Repository = "https://github.com/SolaceLabs/solace-platform-mcp"
