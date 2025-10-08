@@ -44,9 +44,15 @@ def customize_components(
 
 
 def main():
+    from solace_event_portal_designer_mcp import __version__
     # Create an HTTP client for your API
     base_url = os.getenv("SOLACE_API_BASE_URL", default="https://api.solace.cloud")
     token = os.getenv("SOLACE_API_TOKEN")
+    headers_for_tracability={
+        "User-Agent": f"solace/event-portal-designer-mcp/{__version__}",
+        "x-issuer": f"solace/event-portal-designer-mcp/{__version__}"
+    }
+    
     if not token:
         raise ValueError("SOLACE_API_TOKEN environment variable is not set.")
 
@@ -54,11 +60,20 @@ def main():
         base_url=base_url,
         auth=BearerAuth(token=token)
     )
+    client.headers.update(headers_for_tracability)
+
 
     # Load your OpenAPI spec
     spec_path = os.path.join(os.path.dirname(__file__), "data", "ep-designer.json")
-    with open(spec_path) as f:
-        openapi_spec = json.load(f)
+    try:
+        with open(spec_path) as f:
+            openapi_spec = json.load(f)
+    except FileNotFoundError:
+        print(f"Error: OpenAPI spec file not found at {spec_path}")
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in OpenAPI spec: {e}")
+        sys.exit(1)
 
     # There are some cyclical references in the OpenAPI spec that need to be resolved before passing it to FastMCP
     # Manual patch for circular references:
@@ -89,7 +104,14 @@ def main():
         mcp_component_fn=customize_components,
     )
 
-    mcp.run()
+    try:
+        mcp.run()
+    except KeyboardInterrupt:
+        print("Server stopped by user")
+        sys.exit(0)
+    except Exception as e:
+        print(f"Fatal error running MCP server: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
