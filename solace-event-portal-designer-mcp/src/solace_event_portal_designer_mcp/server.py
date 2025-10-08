@@ -61,6 +61,12 @@ def main():
         openapi_spec = json.load(f)
 
     # There are some cyclical references in the OpenAPI spec that need to be resolved before passing it to FastMCP
+    # Manual patch for circular references:
+    # The "InvalidStateReference" schema has properties "inboundInvalidStateReferences" and "outboundInvalidStateReferences"
+    # which reference arrays of "InvalidStateReference" objects, creating a circular reference in the OpenAPI spec.
+    # This causes issues with tools like FastMCP that cannot process such cycles.
+    # To break the cycle, we replace the "items" schema for these properties with a generic object.
+    # This loses schema detail for these properties, but is necessary for compatibility.
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["inboundInvalidStateReferences"]["items"] = {"type": "object"}
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["outboundInvalidStateReferences"]["items"] = {"type": "object"}
 
