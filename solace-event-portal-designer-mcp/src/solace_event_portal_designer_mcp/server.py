@@ -1,17 +1,20 @@
 import httpx
 import json
+import logging
 from fastmcp import FastMCP
 from fastmcp.server.openapi import (
     RouteMap,
     MCPType,
-    HTTPRoute, 
-    OpenAPITool, 
-    OpenAPIResource, 
+    HTTPRoute,
+    OpenAPITool,
+    OpenAPIResource,
     OpenAPIResourceTemplate
 )
 from fastmcp.client.auth import BearerAuth
 import os
 import sys
+
+logger = logging.getLogger(__name__)
 
 # We need to customize the description of each component. We want to remove all information after the "Token Permissions" link.
 def customize_components(
@@ -45,6 +48,9 @@ def customize_components(
 
 def main():
     from solace_event_portal_designer_mcp import __version__
+
+    logger.info(f"Starting Solace Event Portal Designer MCP Server v{__version__}")
+
     # Create an HTTP client for your API
     base_url = os.getenv("SOLACE_API_BASE_URL", default="https://api.solace.cloud")
     token = os.getenv("SOLACE_API_TOKEN")
@@ -52,8 +58,11 @@ def main():
         "User-Agent": f"solace/event-portal-designer-mcp/{__version__}",
         "x-issuer": f"solace/event-portal-designer-mcp/{__version__}"
     }
-    
+
+    logger.info(f"Connecting to Solace API at {base_url}")
+
     if not token:
+        logger.error("SOLACE_API_TOKEN environment variable is not set")
         raise ValueError("SOLACE_API_TOKEN environment variable is not set.")
 
     client = httpx.AsyncClient(
@@ -61,17 +70,22 @@ def main():
         auth=BearerAuth(token=token)
     )
     client.headers.update(headers_for_tracability)
+    logger.debug("HTTP client configured with authentication and custom headers")
 
 
     # Load your OpenAPI spec
     spec_path = os.path.join(os.path.dirname(__file__), "data", "ep-designer.json")
+    logger.debug(f"Loading OpenAPI specification from {spec_path}")
     try:
         with open(spec_path) as f:
             openapi_spec = json.load(f)
+        logger.debug("OpenAPI specification loaded successfully")
     except FileNotFoundError:
+        logger.error(f"OpenAPI spec file not found at {spec_path}")
         print(f"Error: OpenAPI spec file not found at {spec_path}")
         sys.exit(1)
     except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in OpenAPI spec: {e}")
         print(f"Error: Invalid JSON in OpenAPI spec: {e}")
         sys.exit(1)
 
@@ -82,10 +96,12 @@ def main():
     # This causes issues with tools like FastMCP that cannot process such cycles.
     # To break the cycle, we replace the "items" schema for these properties with a generic object.
     # This loses schema detail for these properties, but is necessary for compatibility.
+    logger.info("Patching circular references in OpenAPI specification")
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["inboundInvalidStateReferences"]["items"] = {"type": "object"}
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["outboundInvalidStateReferences"]["items"] = {"type": "object"}
 
     # Create the MCP server
+    logger.info("Creating MCP server from OpenAPI specification")
     mcp = FastMCP.from_openapi(
         openapi_spec=openapi_spec,
         client=client,
@@ -105,11 +121,14 @@ def main():
     )
 
     try:
+        logger.info("Starting MCP server...")
         mcp.run()
     except KeyboardInterrupt:
+        logger.info("Server stopped by user")
         print("Server stopped by user")
         sys.exit(0)
     except Exception as e:
+        logger.exception(f"Fatal error running MCP server: {e}")
         print(f"Fatal error running MCP server: {e}")
         sys.exit(1)
 
