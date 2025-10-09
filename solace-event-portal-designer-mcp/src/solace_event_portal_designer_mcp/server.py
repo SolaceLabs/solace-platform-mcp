@@ -82,11 +82,9 @@ def main():
         logger.debug("OpenAPI specification loaded successfully")
     except FileNotFoundError:
         logger.error(f"OpenAPI spec file not found at {spec_path}")
-        print(f"Error: OpenAPI spec file not found at {spec_path}")
         sys.exit(1)
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON in OpenAPI spec: {e}")
-        print(f"Error: Invalid JSON in OpenAPI spec: {e}")
         sys.exit(1)
 
     # There are some cyclical references in the OpenAPI spec that need to be resolved before passing it to FastMCP
@@ -125,11 +123,9 @@ def main():
         mcp.run()
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
-        print("Server stopped by user")
         sys.exit(0)
     except Exception as e:
         logger.exception(f"Fatal error running MCP server: {e}")
-        print(f"Fatal error running MCP server: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
