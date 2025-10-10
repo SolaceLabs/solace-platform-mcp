@@ -13,9 +13,6 @@ This server enables seamless integration between Solace Agent Mesh (SAM) and Sol
 - **Multiple Authentication Methods**: Supports Basic Authentication (username/password) and Bearer Token authentication.
 - **Configurable OpenAPI Source**: Load the OpenAPI specification from a local file path or a remote URL.
 - **File-Based Logging**: Logs server activity to a rotating file, avoiding interference with `stdio` transport used by the MCP SDK. Logging can also be disabled.
-- **Only Single broker supported per host**: Please be advised that the current implementation only supports communication with a single message broker instance per host.
-  - ***All client connections must target the same broker***
-  - ***Multi-broker topologies are not supported at this time***
 
 ## Requirements
 
@@ -103,6 +100,14 @@ Control which API endpoints become tools using comma-separated lists:
 - **`MCP_LOG_DISABLE`**: Set to `true` to disable logging entirely. Default: `false`.
 
 
+
+### Dynamic Broker Configuration
+
+You can override the default broker configuration on a per-request basis by providing the following optional parameters in your tool calls. This is useful for targeting different brokers without changing the server's environment variables.
+
+- **`broker_url`**: The base URL of a specific Solace broker to target for this request.
+- **`broker_username`**: The username for the target broker.
+- **`broker_password`**: The password for the target broker.
 
 ## Integration with Solace Agent Mesh
 This MCP server is fully compatible with the Solace Agent Mesh ecosystem and can be used as a backend for the SAM MCP Server plugin, allowing SAM agents to interact with Solace PubSub+ brokers through a consistent interface.
