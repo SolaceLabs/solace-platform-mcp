@@ -106,6 +106,31 @@ Use your AI assistant to:
 - "Export an AsyncAPI spec for application version X"
 - "Show me all applications that publish the OrderCreated event"
 
+## Troubleshooting
+
+### Verify your setup is working
+
+After configuring your MCP client, verify the connection:
+
+1. **Restart your MCP client** (e.g., Claude Desktop, Cline)
+2. **Ask a simple question** like: "List my application domains"
+3. If it works, you'll see results from Event Portal
+
+### Common Issues
+
+**"API token not found" or authentication errors:**
+- Ensure `SOLACE_API_TOKEN` is set correctly in your MCP client configuration
+- Verify your token hasn't expired in the [Solace Cloud Console](https://console.solace.cloud/)
+- Check the token has "Event Portal > Designer > Read" permissions
+
+**"Connection refused" or timeout errors:**
+- Check if you're using the correct region via `SOLACE_API_BASE_URL` (see [Multi-Region Support](#multi-region-support))
+- Verify your network allows connections to `api.solace.cloud` (or your region's URL)
+
+**"Command not found" errors:**
+- If using `uvx`, ensure you have Python 3.10+ and `uv` installed
+- If using pip install, run `which solace-ep-designer-mcp` to verify installation
+
 ## Development
 
 This project uses [uv](https://docs.astral.sh/uv/getting-started/installation/) for dependency management.
