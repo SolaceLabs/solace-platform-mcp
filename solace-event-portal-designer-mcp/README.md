@@ -149,7 +149,20 @@ uv pip install -e .
 # Make changes, test immediately (no rebuild needed)
 ```
 
-### Testing
+### Running Tests
+
+```bash
+# Install development dependencies
+uv sync --extra dev
+
+# Run all tests
+uv run pytest
+
+# Run with coverage
+uv run pytest --cov=solace_event_portal_designer_mcp --cov-report=term-missing
+```
+
+### Manual Testing
 
 ```bash
 # Verify installation
