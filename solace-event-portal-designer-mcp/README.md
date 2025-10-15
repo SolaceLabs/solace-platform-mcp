@@ -2,11 +2,37 @@
 
 > ⚠️ **RELEASE CANDIDATE** - Version: 0.1.0rc1
 
-This project provides a Model Context Protocol (MCP) server for interacting with the Solace Event Portal Designer API. Designer enables you to design and view all of the objects in your event-driven architecture (EDA). You can use Designer to create events, associate payload schemas, specify the events that applications publish and subscribe to, and create event APIs and Event API Products to share events. See the [Event Portal Designer Documentation](https://docs.solace.com/Cloud/Event-Portal/event-portal-designer-tool.htm) for more info about Designer.
+The Event Portal MCP (Model Context Protocol) Server is designed to revolutionize how developers interact with event-driven architecture by bringing Event Portal’s comprehensive EDA design capabilities directly into AI-assisted IDEs like Claude Code. This powerful integration tool bridges the gap between Event Portal’s rich event management features and modern development workflows, enabling developers to seamlessly access, create, and manipulate EDA assets through natural language conversations without leaving their preferred development environment. Whether you’re developing applications already designed in Event Portal or creating new event-driven architectures from scratch, this Early Access MCP server allows you to retrieve design information including produced/consumed events and schemas, access AsyncAPI specifications, generate application code, and even create new application versions in Event Portal Designer—all through simple chat interfaces in your IDE. By meeting developers where they are and eliminating context switching between tools, the Event Portal MCP Server aims to streamline the entire event-driven application development lifecycle from design to implementation.
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+  - [Recommended: No installation needed](#recommended-no-installation-needed)
+  - [Alternative: Pre-install with pip](#alternative-pre-install-with-pip)
+- [Configuration](#configuration)
+  - [Multi-Region Support](#multi-region-support)
+- [Environment Variables](#environment-variables)
+- [Available Tools](#available-tools)
+  - [Example Usage](#example-usage)
+- [Troubleshooting](#troubleshooting)
+  - [Verify your setup is working](#verify-your-setup-is-working)
+  - [Common Issues](#common-issues)
+- [Development](#development)
+  - [Running Tests](#running-tests)
+  - [Manual Testing](#manual-testing)
+
+## Prerequisites
+
+- **Python 3.10+** - Required to run the MCP server (includes `pip3`)
+- **[uv](https://docs.astral.sh/uv/)** - Required if using `uvx` in your MCP client configuration (recommended). Not needed if using pip installation method.
+- **MCP Client** - Such as [Claude Desktop](https://claude.ai/download) or [Cline](https://github.com/cline/cline)
+- **Solace Cloud Account** - With access to Event Portal. [Sign up for free](https://console.solace.cloud/login/new-account)
 
 ## Quick Start
 
-1. **Get your Solace API Token** from the [Solace Cloud Console](https://console.solace.cloud/). Ensure the token has **"Event Portal > Designer > Read"** permissions (or appropriate write permissions if you need to create/modify objects).
+1. **Get an API Token** from the [Cloud Console](https://console.solace.cloud/). Ensure the token has **"Event Portal > Designer > Read"** permissions (and appropriate write permissions if you need to create/modify objects).
 
 2. **Add to your MCP client configuration** (e.g., Claude Desktop, Cline):
 
@@ -24,7 +50,7 @@ This project provides a Model Context Protocol (MCP) server for interacting with
 }
 ```
 
-3. **Restart your MCP client** and start asking questions about your Event Portal!
+3. **Restart your MCP client** and start asking questions about Event Portal.
 
 **Example prompts:**
 - "List all application domains in my Event Portal"
@@ -46,7 +72,7 @@ pip install solace-event-portal-designer-mcp
 pip install git+https://github.com/SolaceLabs/solace-platform-mcp.git#subdirectory=solace-event-portal-designer-mcp
 ```
 
-Use this if your MCP client doesn't support `uvx` or you prefer pre-installing. Then use `"command": "solace-ep-designer-mcp"` in your configuration instead of `uvx`.
+Use this option if your MCP client doesn't support `uvx` or you prefer pre-installing. Then use `"command": "solace-ep-designer-mcp"` in your configuration instead of `uvx`.
 
 ## Configuration
 
@@ -86,7 +112,7 @@ By default, the server connects to the US region. If your Solace Cloud account i
 | `SOLACE_API_TOKEN` | Yes | - | Your Solace API token |
 | `SOLACE_API_BASE_URL` | No | `https://api.solace.cloud` | Base URL for Solace Cloud API |
 
-See [Managing your API Tokens](https://docs.solace.com/Cloud/ght_api_tokens.htm) for details on creating a token. Ensure the API Token has at least "Event Portal > Designer > Read" permissions.
+See [Managing your API Tokens](https://docs.solace.com/Cloud/ght_api_tokens.htm) and [Authentication](https://api.solace.dev/cloud/reference/authentication) for details on creating a token. Ensure the API Token has at least "Event Portal > Designer > Read" permissions.
 
 ## Available Tools
 
@@ -120,15 +146,15 @@ After configuring your MCP client, verify the connection:
 
 **"API token not found" or authentication errors:**
 - Ensure `SOLACE_API_TOKEN` is set correctly in your MCP client configuration
-- Verify your token hasn't expired in the [Solace Cloud Console](https://console.solace.cloud/)
-- Check the token has "Event Portal > Designer > Read" permissions
+- Verify your token hasn't expired in the [Cloud Console](https://console.solace.cloud/)
+- Check the token has appropriate permissions
 
 **"Connection refused" or timeout errors:**
 - Check if you're using the correct region via `SOLACE_API_BASE_URL` (see [Multi-Region Support](#multi-region-support))
 - Verify your network allows connections to `api.solace.cloud` (or your region's URL)
 
 **"Command not found" errors:**
-- If using `uvx`, ensure you have Python 3.10+ and `uv` installed
+- Verify you have the [prerequisites](#prerequisites) installed
 - If using pip install, run `which solace-ep-designer-mcp` to verify installation
 
 ## Development
