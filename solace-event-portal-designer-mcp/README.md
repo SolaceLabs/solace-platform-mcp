@@ -116,7 +116,7 @@ See [Managing your API Tokens](https://docs.solace.com/Cloud/ght_api_tokens.htm)
 
 ## Available Tools
 
-This server provides **35 tools** for full CRUD operations on Solace Event Portal Designer objects:
+This server provides a comprehensive set of tools for full CRUD operations on Solace Event Portal Designer objects:
 
 - **Application Domains** - Create, read, update, delete, and list domains
 - **Applications** - Manage applications and their versions
