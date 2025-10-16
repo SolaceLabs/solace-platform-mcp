@@ -1,4 +1,4 @@
-# Solace Event Portal Designer MCP Server
+# (EA) Solace Event Portal Designer MCP Server
 
 > ⚠️ **RELEASE CANDIDATE** - Version: 0.1.0rc1
 
