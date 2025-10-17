@@ -4,7 +4,7 @@
       "command": "solace-ep-designer-mcp",
       "env": {
         "SOLACE_API_TOKEN": "<your-token>",
-        "SOLACE_API_BASE_URL": "https://api.solacecloud.com.au/"
+        "SOLACE_API_BASE_URL": "https://api.solacecloud.com.au"
       }
     },
     "solace-ep-designer-eu": {
