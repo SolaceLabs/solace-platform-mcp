@@ -85,7 +85,7 @@ By default, the server connects to the US region. If your Solace Cloud account i
 | Region | Base URL |
 |--------|----------|
 | United States (default) | `https://api.solace.cloud` |
-| Australia | `https://api.solacecloud.au` |
+| Australia | `https://api.solacecloud.com.au/` |
 | Europe | `https://api.solacecloud.eu` |
 | Singapore | `https://api.solacecloud.sg` |
 
@@ -98,7 +98,7 @@ By default, the server connects to the US region. If your Solace Cloud account i
       "args": ["solace-event-portal-designer-mcp"],
       "env": {
         "SOLACE_API_TOKEN": "<your-token>",
-        "SOLACE_API_BASE_URL": "https://api.solacecloud.au"
+        "SOLACE_API_BASE_URL": "https://api.solacecloud.com.au/"
       }
     }
   }
