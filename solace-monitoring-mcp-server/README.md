@@ -1,9 +1,9 @@
 # (Beta) Solace Monitoring MCP Server for Solace Agent Mesh 
 
-This is a Model Context Protocol (MCP) server for Solace PubSub+ event brokers. 
-It provides comprehensive monitoring and management capabilities for Solace PubSub+ brokers. 
-The server dynamically registers tools based on the Solace PubSub+ OpenAPI specification.
-This server enables seamless integration between Solace Agent Mesh (SAM) and Solace PubSub+ brokers.
+This is a Model Context Protocol (MCP) server for Solace event brokers. 
+It provides comprehensive monitoring and management capabilities for Solace event brokers. 
+The server dynamically registers tools based on the Solace OpenAPI specification.
+This server enables seamless integration between Solace Agent Mesh (SAM) and Solace event brokers.
 
 
 ## Features
@@ -105,7 +105,7 @@ Control which API endpoints become tools using comma-separated lists:
 
 
 ## Integration with Solace Agent Mesh
-This MCP server is fully compatible with the Solace Agent Mesh ecosystem and can be used as a backend for the SAM MCP Server plugin, allowing SAM agents to interact with Solace PubSub+ brokers through a consistent interface.
+This MCP server is fully compatible with the Solace Agent Mesh ecosystem and can be used as a backend for the SAM MCP Server plugin, allowing SAM agents to interact with Solace event brokers through a consistent interface.
 For installation and configuration details, please refer to the documentation at [Solace Agent Mesh MCP Server Plugin GitHub repository](https://github.com/SolaceLabs/solace-agent-mesh-core-plugins/tree/main/sam-mcp-server)
 
 
