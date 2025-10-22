@@ -171,3 +171,4 @@ cython_debug/
 *.swo
 *~
 .DS_Store
+.claude
