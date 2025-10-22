@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+from urllib.parse import urlencode, quote
+
 from dotenv import load_dotenv
 import sys
 import json
@@ -26,8 +28,8 @@ class LoggingConfig:
         load_dotenv()  # Load variables from .env file
         # Logging configuration
         self.log_level = os.environ.get("MCP_LOG_LEVEL", "INFO").upper()
-        self.log_file = os.environ.get("MCP_LOG_FILE", "")
-        self.log_disable = os.environ.get("MCP_LOG_DISABLE", "").lower() == "true"
+        self.log_file = os.environ.get("MCP_LOG_FILE", "mcp-server.log")
+        self.log_disable = os.environ.get("MCP_LOG_DISABLE", "false").lower() == "true"
 
         # Validate log level
         if self.log_level not in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):
@@ -98,6 +100,10 @@ ERROR_INVALID_REQUEST = -32600
 ERROR_METHOD_NOT_FOUND = -32601
 ERROR_INVALID_PARAMS = -32602
 ERROR_INTERNAL = -32603
+
+def _flatten_list(list: List[str]) -> str:
+    """Flatten list of strings into a comma separated string"""
+    return ','.join(map(str, list))
 
 class ServerConfig:
     """Encapsulates configuration properties with default values."""
@@ -257,6 +263,7 @@ class Tool:
     method: str
     parameters: List[Dict[str, Any]] = field(default_factory=list)
     request_body: Optional[Dict[str, Any]] = None
+    response_properties: Optional[Dict[str, Any]] = None
     tags: List[str] = field(default_factory=list)
 
 class SolaceSempv2McpServer:
@@ -368,6 +375,9 @@ class SolaceSempv2McpServer:
                     else:
                         parameters.append(param)
 
+                # Extract response schema properties if available
+                response_properties = self._get_allowed_response_properties(details.get('responses', {}))
+
                 # Extract request body if present (can be in parameters or as requestBody)
                 request_body = None
                 for param in parameters:
@@ -397,6 +407,7 @@ class SolaceSempv2McpServer:
                     method=method.upper(),
                     parameters=parameters,
                     request_body=request_body,
+                    response_properties=response_properties,
                     tags=tags
                 )
 
@@ -405,6 +416,25 @@ class SolaceSempv2McpServer:
                 logger.info(f"Registered tool: {tool_name}")
 
         logger.info(f"Registered {registered_count} tools, filtered out {filtered_count} APIs")
+
+    def _get_allowed_response_properties(self, responses: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Recursively extract allowed response properties from the responses"""
+        properties = None
+        if '200' in responses:
+            ok_resp = responses['200'].get('schema', {})
+            if '$ref' in ok_resp:
+                allowed_response = self._resolve_parameter_reference(ok_resp['$ref'])
+                if 'data' in allowed_response['properties']:
+                    allowed_props = allowed_response['properties'].get('data',{})
+                    if '$ref' in allowed_props:
+                        allowed_prop = self._resolve_parameter_reference(allowed_props['$ref'])
+                        if allowed_prop:
+                            properties = allowed_prop["properties"] or None
+                    if 'items' in allowed_props and '$ref' in allowed_props['items']:
+                        allowed_prop = self._resolve_parameter_reference(allowed_props['items']['$ref'])
+                        if allowed_prop:
+                            properties = allowed_prop["properties"] or None
+        return properties
 
     def _resolve_parameter_reference(self, ref_path: str) -> Dict[str, Any]:
         """Resolve a parameter reference in the OpenAPI spec"""
@@ -606,7 +636,7 @@ class SolaceSempv2McpServer:
         url = self._prepare_url(broker_config.base_url, tool.path, arguments)
 
         # Prepare query parameters
-        query_params = self._prepare_query_params(tool.parameters, arguments)
+        query_params = self._prepare_query_params(tool, arguments)
 
         # Prepare headers
         headers = {"Content-Type": "application/json"}
@@ -625,7 +655,7 @@ class SolaceSempv2McpServer:
 
         # Make the request
         try:
-            response = self._make_request(tool.method, url, params=query_params, headers=headers, json=body, auth=auth)
+            response = self._make_request(tool, url, params=query_params, headers=headers, json=body, auth=auth)
             return response
         except Exception as e:
             logger.error(f"API request failed: {e}")
@@ -639,52 +669,58 @@ class SolaceSempv2McpServer:
         # Replace path parameters
         for arg_name, arg_value in arguments.items():
             placeholder = f"{{{arg_name}}}"
+            replacement_value = str(arg_value)
+            if arg_name in ['queueName', 'clientName', 'vpnName', 'topicEndpointName', 'subscriptionName']:
+                replacement_value= quote(str(arg_value), safe='\'')
             if placeholder in url:
-                url = url.replace(placeholder, str(arg_value))
+                url = url.replace(placeholder, replacement_value)
 
         return url
 
-    def _prepare_query_params(self, parameters: List[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def _prepare_query_params(self, tool: Tool, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Extract query parameters from arguments based on parameter definitions"""
         query_params = {}
-
+        parameters = tool.parameters
+        allowed_args = tool.response_properties
         for param in parameters:
             if param.get('in') == 'query':
                 param_name = param.get('name')
                 if param_name in arguments:
-                    query_params[param_name] = arguments[param_name]
+                    match = [arg for arg in arguments[param_name] if arg in allowed_args] if allowed_args else None
+                    if match:
+                        query_params[param_name] = _flatten_list(match)
 
         return query_params
 
-    def _make_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
+    def _make_request(self, tool: Tool, url: str, params=None, headers=None, json=None, auth=None) -> Dict[str, Any]:
         """Make an HTTP request to the API"""
+        method = tool.method
         logger.info(f"Making {method} request to {url}")
 
         # Debug information - log all parameters
         logger.debug(f"Request details for {method} {url}:")
 
-        # Log each parameter with special handling for sensitive data
-        for param_name, param_value in kwargs.items():
-            if param_name == 'auth':
-                continue
-            elif param_name == 'headers' and param_value:
-                # Mask sensitive headers like Authorization
-                headers_debug = param_value.copy()
-                if 'Authorization' in headers_debug:
-                    auth_parts = headers_debug['Authorization'].split(' ')
-                    if len(auth_parts) > 1:
-                        headers_debug['Authorization'] = f"{auth_parts[0]} ***"
-                    else:
-                        headers_debug['Authorization'] = "***"
-                logger.debug(f"  headers: {headers_debug}")
-            elif param_name == 'json' and param_value:
-                # Print JSON structure but potentially mask sensitive values
-                logger.debug(f"  json: {json.dumps(param_value, indent=2)}")
-            else:
-                logger.debug(f"  {param_name}: {param_value}")
+        # Debug information - Log each header parameter with special handling for sensitive data
+        if headers:
+            # Mask sensitive headers like Authorization
+            headers_debug = headers.copy()
+            if 'Authorization' in headers_debug:
+                auth_parts = headers_debug['Authorization'].split(' ')
+                if len(auth_parts) > 1:
+                    headers_debug['Authorization'] = f"{auth_parts[0]} ***"
+                else:
+                    headers_debug['Authorization'] = "***"
+            logger.debug(f"  headers: {headers_debug}")
+        if json:
+            # Print JSON structure but potentially mask sensitive values
+            logger.debug(f"  json: {json.dumps(json, indent=2)}")
+        # Debug information - Log each query parameter
+        if params:
+            logger.debug(f"  params: {params}")
 
         # Execute the request
-        response = requests.request(method, url, **kwargs)
+        query = urlencode(params, safe=',') if params else ''
+        response = requests.request(method, f"{url}?{query}", headers=headers, json=json, auth=auth)
 
         # Log response details
         logger.debug(f"Response status: {response.status_code}")
