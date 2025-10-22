@@ -16,8 +16,9 @@ The MCP servers in this repository provide standardized interfaces for AI system
 - Analyze message flow patterns and performance metrics
 
 
-## 👀 Explore available MCP server(s)
+## 👀 Explore available MCP servers
 - [Solace Monitoring MCP Server for Solace Agent Mesh](solace-monitoring-mcp-server/)
+- [Solace Event Portal Designer MCP Server](solace-event-portal-designer-mcp/)
 - more coming soon 
 
 

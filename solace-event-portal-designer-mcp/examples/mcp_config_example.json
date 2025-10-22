@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "solace-event-portal-designer": {
+      "command": "solace-ep-designer-mcp",
+      "env": {
+        "SOLACE_API_TOKEN": "<your-solace-api-token>"
+      }
+    }
+  }
+}
