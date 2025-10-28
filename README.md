@@ -9,15 +9,16 @@ These servers enable Large Language Models (LLMs) to securely access, monitor, a
 ## Purpose
 
 The MCP servers in this repository provide standardized interfaces for AI systems to:
-- Monitor Solace PubSub+ event brokers in real-time
+- Monitor Solace event brokers in real-time
 - Retrieve metrics and operational data from Solace products
 - Execute management operations through natural language instructions
 - Access event mesh topology and configuration information
 - Analyze message flow patterns and performance metrics
 
 
-## 👀 Explore available MCP server(s)
+## 👀 Explore available MCP servers
 - [Solace Monitoring MCP Server for Solace Agent Mesh](solace-monitoring-mcp-server/)
+- [Solace Event Portal Designer MCP Server](solace-event-portal-designer-mcp/)
 - more coming soon 
 
 

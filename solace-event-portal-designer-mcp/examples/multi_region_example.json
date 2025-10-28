@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "solace-ep-designer-au": {
+      "command": "solace-ep-designer-mcp",
+      "env": {
+        "SOLACE_API_TOKEN": "<your-token>",
+        "SOLACE_API_BASE_URL": "https://api.solacecloud.com.au"
+      }
+    },
+    "solace-ep-designer-eu": {
+      "command": "solace-ep-designer-mcp",
+      "env": {
+        "SOLACE_API_TOKEN": "<your-token>",
+        "SOLACE_API_BASE_URL": "https://api.solacecloud.eu"
+      }
+    },
+    "solace-ep-designer-sg": {
+      "command": "solace-ep-designer-mcp",
+      "env": {
+        "SOLACE_API_TOKEN": "<your-token>",
+        "SOLACE_API_BASE_URL": "https://api.solacecloud.sg"
+      }
+    }
+  }
+}

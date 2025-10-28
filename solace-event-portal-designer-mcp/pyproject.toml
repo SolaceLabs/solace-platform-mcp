@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "solace-event-portal-designer-mcp"
+dynamic = ["version"]
+description = "Model Context Protocol (MCP) server for Solace Event Portal Designer API"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Solace Corporation", email = "support@solace.com"},
+]
+keywords = ["solace", "mcp", "event-portal", "model-context-protocol"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+dependencies = [
+    "fastmcp>=2.10.5,<3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/SolaceLabs/solace-platform-mcp"
+Repository = "https://github.com/SolaceLabs/solace-platform-mcp"
+Issues = "https://github.com/SolaceLabs/solace-platform-mcp/issues"
+
+[project.scripts]
+solace-ep-designer-mcp = "solace_event_portal_designer_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/solace_event_portal_designer_mcp"]
+exclude = [
+    "tests/",
+    "examples/",
+    "requirements.txt",
+    "uv.lock",
+    ".pytest_cache/",
+    "*.pyc",
+    "__pycache__/",
+]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/solace_event_portal_designer_mcp/data/ep-designer.json" = "solace_event_portal_designer_mcp/data/ep-designer.json"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "tests/",
+    "examples/",
+    "requirements.txt",
+    ".pytest_cache/",
+    "uv.lock",
+]
+
+[tool.hatch.version]
+path = "src/solace_event_portal_designer_mcp/__init__.py"
