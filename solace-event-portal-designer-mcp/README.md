@@ -60,6 +60,12 @@ By meeting developers where they are and eliminating context switching between t
 - "List all application domains in my Event Portal"
 - "Show me events in the OrderManagement domain"
 
+## Usage Guidelines
+
+This MCP server is intended for use with AI assistants (such as Claude Desktop or Cline) in a controlled environment with human oversight. It is not designed for automated workflows like GitHub Actions or unattended automation systems.
+
+When using this tool, you share responsibility for the data privacy of your Solace Cloud data. Use API tokens with appropriate permissions and follow your organization's security policies.
+
 ## Installation
 
 ### Recommended: No installation needed
