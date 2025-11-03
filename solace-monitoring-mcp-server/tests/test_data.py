@@ -13,6 +13,19 @@ DUMMY_OAS_SPEC = {
         "title": "Test API",
         "version": "1.0.0"
     },
+    "parameters": {
+        "selectQuery": {
+            "collectionFormat": "csv",
+            "description": "Include in the response only selected attributes of the object, or exclude from the response selected attributes of the object. See the documentation for the `select` parameter.",
+            "in": "query",
+            "items": {
+                "type": "string"
+            },
+            "name": "select",
+            "required": "false",
+            "type": "array"
+        }
+    },
     "paths": {
         "/items": {
             "get": {
@@ -84,7 +97,12 @@ DUMMY_OAS_SPEC = {
                 "operationId": "getMsgVpnQueues",
                 "summary": "Get all queues across message VPNs",
                 "tags": ["msgVpns", "queues", "read"],
-                "responses": {"200": {"description": "Success"}}
+                "responses": {"200": {"description": "Success"}},
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/selectQuery"
+                    }
+                ]
             }
         }
     }
