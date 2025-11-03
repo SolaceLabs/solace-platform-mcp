@@ -1,6 +1,6 @@
 # (EA) Solace Event Portal Designer MCP Server
 
-> **RELEASE CANDIDATE** - Version: 0.1.0
+> **FINAL RELEASE** - Version: 0.1.0
 
 The Event Portal MCP (Model Context Protocol) Server is designed to revolutionize how developers interact with event-driven architecture by bringing Event Portal’s comprehensive EDA design capabilities directly into AI-assisted IDEs like Claude Code. This powerful integration tool bridges the gap between Event Portal’s rich event management features and modern development workflows, enabling developers to seamlessly access, create, and manipulate EDA assets through natural language conversations without leaving their preferred development environment. 
 
