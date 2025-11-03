@@ -598,7 +598,7 @@ class SolaceSempv2McpServer:
         for arg_name, arg_value in arguments.items():
             placeholder = f"{{{arg_name}}}"
             replacement_value = str(arg_value)
-            if arg_name in ['queueName', 'clientName', 'vpnName', 'topicEndpointName', 'subscriptionName']:
+            if arg_name in ['queueName', 'clientName', 'msgVpnName', 'topicEndpointName', 'subscriptionName']:
                 replacement_value= quote(str(arg_value), safe='\'')
             if placeholder in url:
                 url = url.replace(placeholder, replacement_value)
