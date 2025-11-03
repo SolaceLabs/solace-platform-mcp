@@ -1,6 +1,6 @@
 # (EA) Solace Event Portal Designer MCP Server
 
-> **RELEASE CANDIDATE** - Version: 0.1.0
+> **FINAL RELEASE** - Version: 0.1.0
 
 The Event Portal MCP (Model Context Protocol) Server is designed to revolutionize how developers interact with event-driven architecture by bringing Event Portal’s comprehensive EDA design capabilities directly into AI-assisted IDEs like Claude Code. This powerful integration tool bridges the gap between Event Portal’s rich event management features and modern development workflows, enabling developers to seamlessly access, create, and manipulate EDA assets through natural language conversations without leaving their preferred development environment. 
 
@@ -10,22 +10,22 @@ By meeting developers where they are and eliminating context switching between t
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-  - [Recommended: No installation needed](#recommended-no-installation-needed)
-  - [Alternative: Pre-install with pip](#alternative-pre-install-with-pip)
-- [Configuration](#configuration)
-  - [Multi-Region Support](#multi-region-support)
-- [Environment Variables](#environment-variables)
-- [Available Tools](#available-tools)
-  - [Example Usage](#example-usage)
-- [Troubleshooting](#troubleshooting)
-  - [Verify your setup is working](#verify-your-setup-is-working)
-  - [Common Issues](#common-issues)
-- [Development](#development)
-  - [Running Tests](#running-tests)
-  - [Manual Testing](#manual-testing)
+- [Prerequisites](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#prerequisites)
+- [Quick Start](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#quick-start)
+- [Installation](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#installation)
+  - [Recommended: No installation needed](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#recommended-no-installation-needed)
+  - [Alternative: Pre-install with pip](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#alternative-pre-install-with-pip)
+- [Configuration](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#configuration)
+  - [Multi-Region Support](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#multi-region-support)
+- [Environment Variables](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#environment-variables)
+- [Available Tools](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#available-tools)
+  - [Example Usage](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#example-usage)
+- [Troubleshooting](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#troubleshooting)
+  - [Verify your setup is working](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#verify-your-setup-is-working)
+  - [Common Issues](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#common-issues)
+- [Development](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#development)
+  - [Running Tests](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#running-tests)
+  - [Manual Testing](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#manual-testing)
 
 ## Prerequisites
 
@@ -85,8 +85,6 @@ pip install git+https://github.com/SolaceLabs/solace-platform-mcp.git#subdirecto
 Use this option if your MCP client doesn't support `uvx` or you prefer pre-installing. Then use `"command": "solace-ep-designer-mcp"` in your configuration instead of `uvx`.
 
 ## Configuration
-
-See [examples/](examples/) for more configuration examples.
 
 ### Multi-Region Support
 
@@ -160,11 +158,11 @@ After configuring your MCP client, verify the connection:
 - Check the token has appropriate permissions
 
 **"Connection refused" or timeout errors:**
-- Check if you're using the correct region via `SOLACE_API_BASE_URL` (see [Multi-Region Support](#multi-region-support))
+- Check if you're using the correct region via `SOLACE_API_BASE_URL` (see [Multi-Region Support](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#multi-region-support))
 - Verify your network allows connections to `api.solace.cloud` (or your region's URL)
 
 **"Command not found" errors:**
-- Verify you have the [prerequisites](#prerequisites) installed
+- Verify you have the [prerequisites](https://github.com/SolaceLabs/solace-platform-mcp/tree/main/solace-event-portal-designer-mcp#prerequisites) installed
 - If using pip install, run `which solace-ep-designer-mcp` to verify installation
 
 ## Development
