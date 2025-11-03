@@ -1,0 +1,19 @@
+version: 3
+
+
+project:
+  locator: custom+48578/github.com/SolaceLabs/solace-platform-mcp
+  name: solace-event-portal-designer-mcp
+  team: event-portal
+  teams:
+    - solace-cloud
+    - event-portal
+  labels:
+    - mcp-servers
+paths:
+  only:
+    - ./solace-event-portal-designer-mcp
+  exclude: []
+
+telemetry:
+  scope: full
