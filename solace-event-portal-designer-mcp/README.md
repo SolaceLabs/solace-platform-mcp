@@ -86,8 +86,6 @@ Use this option if your MCP client doesn't support `uvx` or you prefer pre-insta
 
 ## Configuration
 
-See [examples/](examples/) for more configuration examples.
-
 ### Multi-Region Support
 
 By default, the server connects to the US region. If your Solace Cloud account is in a different region, set the `SOLACE_API_BASE_URL` environment variable in your MCP client configuration:
