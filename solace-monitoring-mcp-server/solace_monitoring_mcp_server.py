@@ -111,6 +111,10 @@ class ServerConfig:
         self.default_broker_alias: Optional[str] = os.environ.get("SOLACE_BROKER_DEFAULT")
 
         if self.broker_aliases:
+            # If only one broker alias is defined, make it the default if no explicit default is set
+            if len(self.broker_aliases) == 1 and not self.default_broker_alias:
+                self.default_broker_alias = self.broker_aliases[0]
+
             # Multi-broker configuration
             for alias in self.broker_aliases:
                 suffix = f"_{alias.upper()}"
