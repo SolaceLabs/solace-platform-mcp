@@ -9,6 +9,17 @@ import requests
 from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass, field, asdict
 
+
+@dataclass
+class BrokerConfig:
+    """Encapsulates configuration for a single Solace broker."""
+    alias: str
+    base_url: str
+    username: Optional[str] = None
+    password: Optional[str] = None
+    auth_method: str = "basic"
+    bearer_token: Optional[str] = None
+
 class LoggingConfig:
     """Encapsulates logging configuration properties."""
     def __init__(self):
@@ -94,14 +105,44 @@ class ServerConfig:
         # OpenAPI spec configuration
         self.openapi_spec_path = os.environ.get("OPENAPI_SPEC", "semp-v2-swagger-monitor.json")
 
-        # Solace SEMP API configuration
-        self.base_url = os.environ.get("SOLACE_SEMPV2_BASE_URL", "http://localhost:8080")
-        self.username = os.environ.get("SOLACE_SEMPV2_USERNAME")
-        self.password = os.environ.get("SOLACE_SEMPV2_PASSWORD")
+        # Broker configurations
+        self.brokers: Dict[str, BrokerConfig] = {}
+        self.broker_aliases: List[str] = self._parse_list(os.environ.get("SOLACE_BROKERS_ALIAS", ""))
+        self.default_broker_alias: Optional[str] = os.environ.get("SOLACE_BROKER_DEFAULT")
 
-        # Authentication configuration
-        self.auth_method = os.environ.get("SOLACE_SEMPV2_AUTH_METHOD", "basic").lower()
-        self.bearer_token = os.environ.get("SOLACE_SEMPV2_BEARER_TOKEN", "")
+        if self.broker_aliases:
+            # If only one broker alias is defined, make it the default if no explicit default is set
+            if len(self.broker_aliases) == 1 and not self.default_broker_alias:
+                self.default_broker_alias = self.broker_aliases[0]
+
+            # Multi-broker configuration
+            for alias in self.broker_aliases:
+                suffix = f"_{alias.upper()}"
+                base_url = os.environ.get(f"SOLACE_SEMPV2_BASE_URL{suffix}")
+                if not base_url:
+                    raise ValueError(f"SOLACE_SEMPV2_BASE_URL{suffix} must be specified for alias '{alias}'")
+
+                self.brokers[alias] = BrokerConfig(
+                    alias=alias,
+                    base_url=base_url,
+                    username=os.environ.get(f"SOLACE_SEMPV2_USERNAME{suffix}"),
+                    password=os.environ.get(f"SOLACE_SEMPV2_PASSWORD{suffix}"),
+                    auth_method=os.environ.get(f"SOLACE_SEMPV2_AUTH_METHOD{suffix}", "basic").lower(),
+                    bearer_token=os.environ.get(f"SOLACE_SEMPV2_BEARER_TOKEN{suffix}", "")
+                )
+        else:
+            # Single-broker configuration (backward compatibility)
+            alias = "default"
+            self.broker_aliases.append(alias)
+            self.default_broker_alias = alias
+            self.brokers[alias] = BrokerConfig(
+                alias=alias,
+                base_url=os.environ.get("SOLACE_SEMPV2_BASE_URL", "http://localhost:8080"),
+                username=os.environ.get("SOLACE_SEMPV2_USERNAME"),
+                password=os.environ.get("SOLACE_SEMPV2_PASSWORD"),
+                auth_method=os.environ.get("SOLACE_SEMPV2_AUTH_METHOD", "basic").lower(),
+                bearer_token=os.environ.get("SOLACE_SEMPV2_BEARER_TOKEN", "")
+            )
 
         # API filtering options - by default, include all APIs
         self.include_methods = self._parse_list(os.environ.get("MCP_API_INCLUDE_METHODS", ""))
@@ -124,12 +165,9 @@ class ServerConfig:
             "OpenAPI Configuration": {
                 "openapi_spec_path": self.openapi_spec_path
             },
-            "Solace SEMP API Configuration": {
-                "base_url": self.base_url,
-                "username": self.username if self.username else "<not set>",
-                "password": "********" if self.password else "<not set>",
-                "auth_method": self.auth_method,
-                "bearer_token": "********" if self.bearer_token else "<not set>"
+            "Broker Configuration": {
+                "broker_aliases": self.broker_aliases or "<not set>",
+                "default_broker_alias": self.default_broker_alias or "<not set>"
             },
             "API Filtering Configuration": {
                 "include_methods": self.include_methods or "<not set>",
@@ -148,6 +186,15 @@ class ServerConfig:
             for key, value in values.items():
                 logger.info(f"    {key}: {value}")
 
+        # Log details for each broker
+        for alias, broker_config in self.brokers.items():
+            logger.info(f"  Broker '{alias}':")
+            logger.info(f"    base_url: {broker_config.base_url}")
+            logger.info(f"    username: {broker_config.username or '<not set>'}")
+            logger.info(f"    password: {'********' if broker_config.password else '<not set>'}")
+            logger.info(f"    auth_method: {broker_config.auth_method}")
+            logger.info(f"    bearer_token: {'********' if broker_config.bearer_token else '<not set>'}")
+
     @staticmethod
     def _parse_list(value: str) -> List[str]:
         """Parse comma-separated string into list of strings."""
@@ -157,17 +204,26 @@ class ServerConfig:
 
     def validate(self):
         """Validate the configuration and raise errors for critical missing properties."""
-        if not self.base_url:
-            raise ValueError("SOLACE_SEMPV2_BASE_URL must be specified")
+        if not self.brokers:
+            raise ValueError("At least one broker must be configured.")
 
-        if self.auth_method == "basic":
-            if self.username and not self.password:
-                logger.warning("Username specified but password is missing")
-            if not self.username and self.password:
-                logger.warning("Password specified but username is missing")
-        elif self.auth_method == "bearer":
-            if not self.bearer_token:
-                logger.warning("Bearer auth selected but token is missing")
+        for alias, broker in self.brokers.items():
+            if not broker.base_url:
+                raise ValueError(f"SOLACE_SEMPV2_BASE_URL must be specified for broker '{alias}'")
+
+            if broker.auth_method == "basic":
+                if not broker.username and not broker.password:
+                    logger.warning(f"Basic auth selected for broker '{alias}' but no username or password was provided.")
+                elif broker.username and not broker.password:
+                    logger.warning(f"Username specified but password is missing for broker '{alias}'")
+                elif not broker.username and broker.password:
+                    logger.warning(f"Password specified but username is missing for broker '{alias}'")
+            elif broker.auth_method == "bearer":
+                if not broker.bearer_token:
+                    logger.warning(f"Bearer auth selected but token is missing for broker '{alias}'")
+
+        if self.default_broker_alias and self.default_broker_alias not in self.brokers:
+            raise ValueError(f"Default broker alias '{self.default_broker_alias}' not found in configured brokers.")
 
 @dataclass
 class McpMessage:
@@ -211,9 +267,6 @@ class SolaceSempv2McpServer:
         self.config = config
         self.tools: Dict[str, Tool] = {}
         self.openapi_path = config.openapi_spec_path
-        self.base_url = config.base_url
-        self.username = config.username
-        self.password = config.password
         self.openapi_spec = self._load_openapi_spec(self.openapi_path)
 
         self._register_tools()
@@ -375,6 +428,16 @@ class SolaceSempv2McpServer:
         properties = {}
         required = []
 
+        # Add broker_alias parameter if multiple brokers are configured
+        if len(self.config.broker_aliases) > 1:
+            properties['broker_alias'] = {
+                "type": "string",
+                "description": f"The alias of the broker to target. Available aliases: {', '.join(self.config.broker_aliases)}",
+                "enum": self.config.broker_aliases
+            }
+            if not self.config.default_broker_alias:
+                required.append('broker_alias')
+
         # Process path parameters
         for param in parameters:
             # Check if this is a reference parameter and resolve it
@@ -530,8 +593,17 @@ class SolaceSempv2McpServer:
 
     def _invoke_tool(self, tool: Tool, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Dynamically invoke a tool by making the appropriate API request"""
+        # Determine the target broker
+        broker_alias = arguments.pop('broker_alias', self.config.default_broker_alias)
+        if not broker_alias:
+            raise ValueError("Broker alias not specified and no default broker is configured.")
+
+        broker_config = self.config.brokers.get(broker_alias)
+        if not broker_config:
+            raise ValueError(f"Broker with alias '{broker_alias}' not found.")
+
         # Prepare the URL with path parameters
-        url = self._prepare_url(tool.path, arguments)
+        url = self._prepare_url(broker_config.base_url, tool.path, arguments)
 
         # Prepare query parameters
         query_params = self._prepare_query_params(tool.parameters, arguments)
@@ -546,10 +618,10 @@ class SolaceSempv2McpServer:
 
         # Prepare auth based on configured authentication method
         auth = None
-        if self.config.auth_method == "basic" and self.config.username and self.config.password:
-            auth = (self.config.username, self.config.password)
-        elif self.config.auth_method == "bearer" and self.config.bearer_token:
-            headers["Authorization"] = f"Bearer {self.config.bearer_token}"
+        if broker_config.auth_method == "basic" and broker_config.username and broker_config.password:
+            auth = (broker_config.username, broker_config.password)
+        elif broker_config.auth_method == "bearer" and broker_config.bearer_token:
+            headers["Authorization"] = f"Bearer {broker_config.bearer_token}"
 
         # Make the request
         try:
@@ -560,9 +632,9 @@ class SolaceSempv2McpServer:
             # Re-raising with a message that includes "API request failed" for test compatibility
             raise Exception(f"API request failed: {str(e)}")
 
-    def _prepare_url(self, path_template: str, arguments: Dict[str, Any]) -> str:
+    def _prepare_url(self, base_url: str, path_template: str, arguments: Dict[str, Any]) -> str:
         """Prepare the URL by replacing path parameters with values from arguments"""
-        url = self.base_url + path_template
+        url = base_url + path_template
 
         # Replace path parameters
         for arg_name, arg_value in arguments.items():

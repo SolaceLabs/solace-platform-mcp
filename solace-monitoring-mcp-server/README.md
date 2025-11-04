@@ -13,9 +13,7 @@ This server enables seamless integration between Solace Agent Mesh (SAM) and Sol
 - **Multiple Authentication Methods**: Supports Basic Authentication (username/password) and Bearer Token authentication.
 - **Configurable OpenAPI Source**: Load the OpenAPI specification from a local file path or a remote URL.
 - **File-Based Logging**: Logs server activity to a rotating file, avoiding interference with `stdio` transport used by the MCP SDK. Logging can also be disabled.
-- **Only Single broker supported per host**: Please be advised that the current implementation only supports communication with a single message broker instance per host.
-  - ***All client connections must target the same broker***
-  - ***Multi-broker topologies are not supported at this time***
+- **Multi-Broker Support**: Connect to and manage multiple Solace brokers from a single server instance.
 
 ## Requirements
 
@@ -69,7 +67,54 @@ The server is configured entirely through environment variables, typically set w
 
 - **`OPENAPI_SPEC`**: Path to the local OpenAPI specification file (e.g., [`semp-v2-swagger-monitor.json`](./semp-v2-swagger-monitor.json)). Used if `OPENAPI_SPEC_URL` is not provided or fails.
 - **`OPENAPI_SPEC_URL`**: URL to fetch the OpenAPI specification from. Takes precedence over `OPENAPI_SPEC`.
+
+### Single-Broker Configuration (Default)
+
+If you are connecting to a single broker, you can use the following environment variables. This maintains backward compatibility with previous versions.
+
 - **`SOLACE_SEMPV2_BASE_URL`**: Base URL for the Solace SEMPv2 API (e.g., `http://<host>:<port>`). Default: `http://localhost:8080`.
+- **`SOLACE_SEMPV2_AUTH_METHOD`**: Authentication method (`basic`, `bearer`, or `none`).
+- **`SOLACE_SEMPV2_USERNAME`**: Username for Basic Authentication.
+- **`SOLACE_SEMPV2_PASSWORD`**: Password for Basic Authentication.
+- **`SOLACE_SEMPV2_BEARER_TOKEN`**: Bearer token for Bearer Authentication.
+
+### Multi-Broker Configuration
+
+To connect to multiple brokers, you must first define a list of broker aliases.
+
+- **`SOLACE_BROKERS_ALIAS`**: A comma-separated list of unique aliases for each broker (e.g., `broker_a,broker_b`).
+
+For each alias, you must provide a full set of configuration variables by appending the alias name (in uppercase) to the standard variable names.
+
+- **`SOLACE_SEMPV2_BASE_URL_<ALIAS>`**: The base URL for the broker (e.g., `SOLACE_SEMPV2_BASE_URL_BROKER_A`).
+- **`SOLACE_SEMPV2_AUTH_METHOD_<ALIAS>`**: The authentication method for the broker.
+- **`SOLACE_SEMPV2_USERNAME_<ALIAS>`**: The username for the broker.
+- **`SOLACE_SEMPV2_PASSWORD_<ALIAS>`**: The password for the broker.
+- **`SOLACE_SEMPV2_BEARER_TOKEN_<ALIAS>`**: The bearer token for the broker.
+
+You can also specify a default broker to be used when no alias is provided in a tool call.
+
+- **`SOLACE_BROKER_DEFAULT`**: The alias of the broker to use as the default (e.g., `broker_a`).
+
+When using a multi-broker configuration, all tools will include a `broker_alias` parameter.
+- If a default broker is defined, this parameter is **optional**.
+- If no default broker is defined, this parameter is **required**.
+
+**Example Multi-Broker `env` Configuration:**
+```json
+"env": {
+    "SOLACE_BROKERS_ALIAS": "broker_a,broker_b",
+    "SOLACE_BROKER_DEFAULT": "broker_a",
+
+    "SOLACE_SEMPV2_BASE_URL_BROKER_A": "http://localhost:8080",
+    "SOLACE_SEMPV2_USERNAME_BROKER_A": "admin",
+    "SOLACE_SEMPV2_PASSWORD_BROKER_A": "admin",
+
+    "SOLACE_SEMPV2_BASE_URL_BROKER_B": "http://otherhost:8080",
+    "SOLACE_SEMPV2_USERNAME_BROKER_B": "user",
+    "SOLACE_SEMPV2_PASSWORD_BROKER_B": "password"
+}
+```
 
 ### Authentication Configuration
 
