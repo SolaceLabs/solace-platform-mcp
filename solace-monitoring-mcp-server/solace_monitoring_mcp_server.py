@@ -636,7 +636,7 @@ class SolaceSempv2McpServer:
         url = self._prepare_url(broker_config.base_url, tool.path, arguments)
 
         # Prepare query parameters
-        query_params = self._prepare_query_params(tool, arguments)
+        query_params = self._prepare_query_params_for_tool(tool, arguments)
 
         # Prepare headers
         headers = {"Content-Type": "application/json"}
@@ -655,7 +655,7 @@ class SolaceSempv2McpServer:
 
         # Make the request
         try:
-            response = self._make_request(tool, url, params=query_params, headers=headers, json=body, auth=auth)
+            response = self._make_request_for_tool(tool, url, params=query_params, headers=headers, json=body, auth=auth)
             return response
         except Exception as e:
             logger.error(f"API request failed: {e}")
@@ -677,7 +677,7 @@ class SolaceSempv2McpServer:
 
         return url
 
-    def _prepare_query_params(self, tool: Tool, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def _prepare_query_params_for_tool(self, tool: Tool, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Extract query parameters from arguments based on parameter definitions"""
         query_params = {}
         parameters = tool.parameters
@@ -692,35 +692,54 @@ class SolaceSempv2McpServer:
 
         return query_params
 
-    def _make_request(self, tool: Tool, url: str, params=None, headers=None, json=None, auth=None) -> Dict[str, Any]:
-        """Make an HTTP request to the API"""
+    def _prepare_query_params(self, parameters: List[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract query parameters from arguments based on parameter definitions"""
+        query_params = {}
+
+        for param in parameters:
+            if param.get('in') == 'query':
+                param_name = param.get('name')
+                if param_name in arguments:
+                    query_params[param_name] = arguments[param_name]
+
+        return query_params
+
+    def _make_request_for_tool(self, tool: Tool, url: str, params=None, headers=None, json=None, auth=None):
+        """Intermediate function to urlencode the parameter values"""
         method = tool.method
+        query = urlencode(params, safe=',') if params else ''
+        return self._make_request(method, f"{url}?{query}", params, headers, json, auth)
+
+    def _make_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
+        """Make an HTTP request to the API"""
         logger.info(f"Making {method} request to {url}")
 
         # Debug information - log all parameters
         logger.debug(f"Request details for {method} {url}:")
 
         # Debug information - Log each header parameter with special handling for sensitive data
-        if headers:
-            # Mask sensitive headers like Authorization
-            headers_debug = headers.copy()
-            if 'Authorization' in headers_debug:
-                auth_parts = headers_debug['Authorization'].split(' ')
-                if len(auth_parts) > 1:
-                    headers_debug['Authorization'] = f"{auth_parts[0]} ***"
-                else:
-                    headers_debug['Authorization'] = "***"
-            logger.debug(f"  headers: {headers_debug}")
-        if json:
-            # Print JSON structure but potentially mask sensitive values
-            logger.debug(f"  json: {json.dumps(json, indent=2)}")
-        # Debug information - Log each query parameter
-        if params:
-            logger.debug(f"  params: {params}")
+        # Log each parameter with special handling for sensitive data
+        for param_name, param_value in kwargs.items():
+            if param_name == 'auth':
+                continue
+            elif param_name == 'headers' and param_value:
+                # Mask sensitive headers like Authorization
+                headers_debug = param_value.copy()
+                if 'Authorization' in headers_debug:
+                    auth_parts = headers_debug['Authorization'].split(' ')
+                    if len(auth_parts) > 1:
+                        headers_debug['Authorization'] = f"{auth_parts[0]} ***"
+                    else:
+                        headers_debug['Authorization'] = "***"
+                logger.debug(f"  headers: {headers_debug}")
+            elif param_name == 'json' and param_value:
+                # Print JSON structure but potentially mask sensitive values
+                logger.debug(f"  json: {json.dumps(param_value, indent=2)}")
+            else:
+                logger.debug(f"  {param_name}: {param_value}")
 
         # Execute the request
-        query = urlencode(params, safe=',') if params else ''
-        response = requests.request(method, f"{url}?{query}", headers=headers, json=json, auth=auth)
+        response = requests.request(method, url, **kwargs)
 
         # Log response details
         logger.debug(f"Response status: {response.status_code}")
