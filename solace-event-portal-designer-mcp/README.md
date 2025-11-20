@@ -45,7 +45,11 @@ By meeting developers where they are and eliminating context switching between t
   "mcpServers": {
     "solace-event-portal-designer": {
       "command": "uvx",
-      "args": ["solace-event-portal-designer-mcp"],
+      "args": [
+        "--from",
+        "solace-event-portal-designer-mcp",
+        "solace-ep-designer-mcp"
+      ],
       "env": {
         "SOLACE_API_TOKEN": "<your-api-token>"
       }
@@ -103,7 +107,11 @@ By default, the server connects to the US region. If your Solace Cloud account i
   "mcpServers": {
     "solace-event-portal-designer": {
       "command": "uvx",
-      "args": ["solace-event-portal-designer-mcp"],
+      "args": [
+        "--from",
+        "solace-event-portal-designer-mcp",
+        "solace-ep-designer-mcp"
+      ],
       "env": {
         "SOLACE_API_TOKEN": "<your-token>",
         "SOLACE_API_BASE_URL": "https://api.solacecloud.com.au"
