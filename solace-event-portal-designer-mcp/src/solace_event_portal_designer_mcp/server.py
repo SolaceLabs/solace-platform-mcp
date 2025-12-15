@@ -5,11 +5,11 @@ from fastmcp import FastMCP
 from fastmcp.server.openapi import (
     RouteMap,
     MCPType,
-    HTTPRoute,
     OpenAPITool,
     OpenAPIResource,
     OpenAPIResourceTemplate
 )
+from fastmcp.server.openapi.routing import HTTPRoute
 from fastmcp.client.auth import BearerAuth
 import os
 import sys
