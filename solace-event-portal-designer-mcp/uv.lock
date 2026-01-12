@@ -1373,7 +1373,7 @@ wheels = [
 name = "solace-event-portal-designer-mcp"
 # do not commit a removal of this "version" and its value, we need it for running the `fossa analyze` command
 # Also please update it to the next version during each up-version.
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
