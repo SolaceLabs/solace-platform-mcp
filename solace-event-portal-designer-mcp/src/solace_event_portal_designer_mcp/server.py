@@ -5,8 +5,8 @@ from fastmcp import FastMCP
 from fastmcp.server.openapi import (
     RouteMap,
     MCPType,
-    HTTPRoute,
     OpenAPITool,
+    HTTPRoute,
     OpenAPIResource,
     OpenAPIResourceTemplate
 )
