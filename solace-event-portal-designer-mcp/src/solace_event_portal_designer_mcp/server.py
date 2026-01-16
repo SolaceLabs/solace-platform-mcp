@@ -46,15 +46,13 @@ def customize_components(
             del component.parameters["properties"][key]
 
 
-def main():
+def _create_mcp_server(stateless_http: bool = False) -> FastMCP:
+    """Create and configure the FastMCP server instance."""
     from solace_event_portal_designer_mcp import __version__
 
-    logger.info(f"Starting Solace Event Portal Designer MCP Server v{__version__}")
-
-    # Create an HTTP client for your API
     base_url = os.getenv("SOLACE_API_BASE_URL", default="https://api.solace.cloud")
     token = os.getenv("SOLACE_API_TOKEN")
-    headers_for_tracability={
+    headers_for_tracability = {
         "User-Agent": f"solace/event-portal-designer-mcp/{__version__}",
         "x-issuer": f"solace/event-portal-designer-mcp/{__version__}"
     }
@@ -72,8 +70,6 @@ def main():
     client.headers.update(headers_for_tracability)
     logger.debug("HTTP client configured with authentication and custom headers")
 
-
-    # Load your OpenAPI spec
     spec_path = os.path.join(os.path.dirname(__file__), "data", "ep-designer.json")
     logger.debug(f"Loading OpenAPI specification from {spec_path}")
     try:
@@ -82,28 +78,26 @@ def main():
         logger.debug("OpenAPI specification loaded successfully")
     except FileNotFoundError:
         logger.error(f"OpenAPI spec file not found at {spec_path}")
-        sys.exit(1)
+        raise
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON in OpenAPI spec: {e}")
-        sys.exit(1)
+        raise
 
-    # There are some cyclical references in the OpenAPI spec that need to be resolved before passing it to FastMCP
-    # Manual patch for circular references:
-    # The "InvalidStateReference" schema has properties "inboundInvalidStateReferences" and "outboundInvalidStateReferences"
-    # which reference arrays of "InvalidStateReference" objects, creating a circular reference in the OpenAPI spec.
-    # This causes issues with tools like FastMCP that cannot process such cycles.
-    # To break the cycle, we replace the "items" schema for these properties with a generic object.
-    # This loses schema detail for these properties, but is necessary for compatibility.
+    # Manual patch for circular references in the OpenAPI spec:
+    # The "InvalidStateReference" schema has properties "inboundInvalidStateReferences" and
+    # "outboundInvalidStateReferences" which reference arrays of "InvalidStateReference" objects,
+    # creating a circular reference. FastMCP cannot process such cycles, so we replace the "items"
+    # schema for these properties with a generic object. This loses schema detail but is necessary.
     logger.info("Patching circular references in OpenAPI specification")
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["inboundInvalidStateReferences"]["items"] = {"type": "object"}
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["outboundInvalidStateReferences"]["items"] = {"type": "object"}
 
-    # Create the MCP server
     logger.info("Creating MCP server from OpenAPI specification")
-    mcp = FastMCP.from_openapi(
+    return FastMCP.from_openapi(
         openapi_spec=openapi_spec,
         client=client,
         name="EP Designer API",
+        stateless_http=stateless_http,
         route_maps=[
             RouteMap(pattern=r"^/api/v2/architecture/applicationDomains(/\{id\})?$", mcp_type=MCPType.TOOL),
             RouteMap(pattern=r"^/api/v2/architecture/applications(/\{id\})?$", mcp_type=MCPType.TOOL),
@@ -118,7 +112,20 @@ def main():
         mcp_component_fn=customize_components,
     )
 
+
+def create_mcp_http_app():
+    """Create and return the FastMCP HTTP app for use in HTTP contexts like Lambda."""
+    mcp = _create_mcp_server(stateless_http=True)
+    return mcp.http_app(path="/mcp")
+
+
+def main():
+    from solace_event_portal_designer_mcp import __version__
+
+    logger.info(f"Starting Solace Event Portal Designer MCP Server v{__version__}")
+
     try:
+        mcp = _create_mcp_server()
         logger.info("Starting MCP server...")
         mcp.run()
     except KeyboardInterrupt:
