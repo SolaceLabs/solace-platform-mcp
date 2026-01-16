@@ -83,6 +83,11 @@ def _create_mcp_server(stateless_http: bool = False) -> FastMCP:
         logger.error(f"Invalid JSON in OpenAPI spec: {e}")
         raise
 
+    # Manual patch for circular references in the OpenAPI spec:
+    # The "InvalidStateReference" schema has properties "inboundInvalidStateReferences" and
+    # "outboundInvalidStateReferences" which reference arrays of "InvalidStateReference" objects,
+    # creating a circular reference. FastMCP cannot process such cycles, so we replace the "items"
+    # schema for these properties with a generic object. This loses schema detail but is necessary.
     logger.info("Patching circular references in OpenAPI specification")
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["inboundInvalidStateReferences"]["items"] = {"type": "object"}
     openapi_spec["components"]["schemas"]["InvalidStateReference"]["properties"]["outboundInvalidStateReferences"]["items"] = {"type": "object"}
