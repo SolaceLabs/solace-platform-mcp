@@ -1,0 +1,21 @@
+version: 3
+project:
+  locator: SolaceLabs_solace-event-portal-designer-mcp
+  id: SolaceLabs_solace-event-portal-designer-mcp
+  name: solace-event-portal-designer-mcp
+  teams: []
+  labels:
+    - python
+vendoredDependencies:
+  forceRescans: false
+  scanMethod: CLILicenseScan
+  licenseScanPathFilters:
+    exclude:
+      - "./.git"
+      - "./.github"
+paths:
+  exclude:
+    - ./.git
+    - ./.github
+telemetry:
+  scope: full
