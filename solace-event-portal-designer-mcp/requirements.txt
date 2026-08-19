@@ -80,7 +80,7 @@ jsonschema-specifications==2025.9.1
     # via jsonschema
 markdown-it-py==4.0.0
     # via rich
-mcp==1.20.0
+mcp==1.28.1
     # via fastmcp
 mdurl==0.1.2
     # via markdown-it-py
