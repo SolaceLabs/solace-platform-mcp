@@ -1,5 +1,7 @@
-name: SCA Scan on merge to main
+name: SCA Scan
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
 
@@ -22,6 +24,7 @@ jobs:
           - { path: solace-monitoring-mcp-server, name: solace-monitoring-mcp-server }
     uses: SolaceDev/solace-public-workflows/.github/workflows/sca-scan-and-guard.yaml@main
     with:
+      setup_actions: '["setup-uv"]'
       additional_scan_params: |
         fossa.only_path=${{ matrix.path }}
     secrets:
@@ -29,7 +32,12 @@ jobs:
 
   update_manifest:
     needs: sca_scan
-    if: needs.sca_scan.result == 'success' && github.ref_name == github.event.repository.default_branch
+    # The manifest records what landed on the default branch, so it must never
+    # be written from a PR run -- the scan still runs, the write does not.
+    if: >-
+      needs.sca_scan.result == 'success'
+      && github.event_name == 'push'
+      && github.ref_name == github.event.repository.default_branch
     strategy:
       matrix:
         include:
@@ -57,7 +65,7 @@ jobs:
           ddb_sort_key: repository
           ddb_item_to_be_added: |
             {
-              "squad": "temp",
+              "squad": "event-portal",
               "repository": "${{ matrix.name }}",
               "dev": {
                 "sha": "${{ github.sha }}",
