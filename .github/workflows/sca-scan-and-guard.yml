@@ -1,4 +1,5 @@
 name: SCA Scan
+
 on:
   pull_request:
     branches: [main]
@@ -16,17 +17,9 @@ permissions:
 
 jobs:
   sca_scan:
-    strategy:
-      matrix:
-        include:
-          - { path: ., name: solace-platform-mcp }
-          - { path: solace-event-portal-designer-mcp, name: solace-event-portal-designer-mcp }
-          - { path: solace-monitoring-mcp-server, name: solace-monitoring-mcp-server }
     uses: SolaceDev/solace-public-workflows/.github/workflows/sca-scan-and-guard.yaml@main
     with:
       setup_actions: '["setup-uv"]'
-      additional_scan_params: |
-        fossa.only_path=${{ matrix.path }}
     secrets:
       FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
 
@@ -38,12 +31,6 @@ jobs:
       needs.sca_scan.result == 'success'
       && github.event_name == 'push'
       && github.ref_name == github.event.repository.default_branch
-    strategy:
-      matrix:
-        include:
-          - { path: ., name: solace-platform-mcp }
-          - { path: solace-event-portal-designer-mcp, name: solace-event-portal-designer-mcp }
-          - { path: solace-monitoring-mcp-server, name: solace-monitoring-mcp-server }
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -66,7 +53,7 @@ jobs:
           ddb_item_to_be_added: |
             {
               "squad": "event-portal",
-              "repository": "${{ matrix.name }}",
+              "repository": "${{ github.event.repository.name }}",
               "dev": {
                 "sha": "${{ github.sha }}",
                 "version": "${{ github.ref_name }}"
