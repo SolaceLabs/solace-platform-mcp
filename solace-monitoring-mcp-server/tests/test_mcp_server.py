@@ -16,7 +16,7 @@ import json
 import requests
 from unittest.mock import patch, MagicMock
 
-from solace_sempv2_mcp_server import (
+from solace_monitoring_mcp_server import (
     SolaceSempv2McpServer, ServerConfig, LoggingConfig, 
     Tool, McpResponse, McpError, setup_logging
 )
@@ -385,7 +385,33 @@ class TestApiInvocation(BaseTestCase):
         self.assertEqual(call_kwargs["headers"]["Authorization"], "Bearer my-token")
         
         self.assertEqual(result, {"data": {"name": "broker"}})
-    
+
+    @patch('requests.request')
+    def test_invoke_get_with_queryparams(self, mock_request):
+        """Test invoking a GET tool with a path parameter."""
+        # Setup mock
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"data": {"queueName": "queue1", "enabled": "true", "state": "up"}}
+        mock_request.return_value = mock_response
+
+        # Create server with mock spec
+        server = self.mock_server_setup(mock_load_spec=True)
+
+        # Get tool and invoke
+        tool = server.tools["getMsgVpnQueues"]
+        result = server._invoke_tool(tool,
+                                     {
+                                         "msgVpnName": "default",
+                                         "select":["queueName","enabled","state"]
+                                    })
+
+        # Verify request was made correctly
+        call_kwargs = self.verify_request_basics(
+            mock_request, "GET", "http://sample-solace:8080/msgVpns/queues")
+
+        self.assertEqual(result, {"data": {"queueName": "queue1", "enabled": "true", "state": "up"}})
+
     @patch('requests.request')
     def test_invoke_api_error(self, mock_request):
         """Test handling HTTP errors when invoking a tool."""

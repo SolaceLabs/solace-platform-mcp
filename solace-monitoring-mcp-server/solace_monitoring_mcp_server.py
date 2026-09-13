@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+from urllib.parse import urlencode, quote
+
 from dotenv import load_dotenv
 import sys
 import json
@@ -26,8 +28,8 @@ class LoggingConfig:
         load_dotenv()  # Load variables from .env file
         # Logging configuration
         self.log_level = os.environ.get("MCP_LOG_LEVEL", "INFO").upper()
-        self.log_file = os.environ.get("MCP_LOG_FILE", "")
-        self.log_disable = os.environ.get("MCP_LOG_DISABLE", "").lower() == "true"
+        self.log_file = os.environ.get("MCP_LOG_FILE", "mcp-server.log")
+        self.log_disable = os.environ.get("MCP_LOG_DISABLE", "false").lower() == "true"
 
         # Validate log level
         if self.log_level not in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):
@@ -98,6 +100,10 @@ ERROR_INVALID_REQUEST = -32600
 ERROR_METHOD_NOT_FOUND = -32601
 ERROR_INVALID_PARAMS = -32602
 ERROR_INTERNAL = -32603
+
+def _flatten_list(list: List[str]) -> str:
+    """Flatten list of strings into a comma separated string"""
+    return ','.join(map(str, list))
 
 class ServerConfig:
     """Encapsulates configuration properties with default values."""
@@ -257,6 +263,7 @@ class Tool:
     method: str
     parameters: List[Dict[str, Any]] = field(default_factory=list)
     request_body: Optional[Dict[str, Any]] = None
+    response_properties: Optional[Dict[str, Any]] = None
     tags: List[str] = field(default_factory=list)
 
 class SolaceSempv2McpServer:
@@ -368,6 +375,9 @@ class SolaceSempv2McpServer:
                     else:
                         parameters.append(param)
 
+                # Extract response schema properties if available
+                response_properties = self._get_allowed_response_properties(details.get('responses', {}))
+
                 # Extract request body if present (can be in parameters or as requestBody)
                 request_body = None
                 for param in parameters:
@@ -397,6 +407,7 @@ class SolaceSempv2McpServer:
                     method=method.upper(),
                     parameters=parameters,
                     request_body=request_body,
+                    response_properties=response_properties,
                     tags=tags
                 )
 
@@ -405,6 +416,25 @@ class SolaceSempv2McpServer:
                 logger.info(f"Registered tool: {tool_name}")
 
         logger.info(f"Registered {registered_count} tools, filtered out {filtered_count} APIs")
+
+    def _get_allowed_response_properties(self, responses: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Recursively extract allowed response properties from the responses"""
+        properties = None
+        if '200' in responses:
+            ok_resp = responses['200'].get('schema', {})
+            if '$ref' in ok_resp:
+                allowed_response = self._resolve_parameter_reference(ok_resp['$ref'])
+                if 'data' in allowed_response['properties']:
+                    allowed_props = allowed_response['properties'].get('data',{})
+                    if '$ref' in allowed_props:
+                        allowed_prop = self._resolve_parameter_reference(allowed_props['$ref'])
+                        if allowed_prop:
+                            properties = allowed_prop["properties"] or None
+                    if 'items' in allowed_props and '$ref' in allowed_props['items']:
+                        allowed_prop = self._resolve_parameter_reference(allowed_props['items']['$ref'])
+                        if allowed_prop:
+                            properties = allowed_prop["properties"] or None
+        return properties
 
     def _resolve_parameter_reference(self, ref_path: str) -> Dict[str, Any]:
         """Resolve a parameter reference in the OpenAPI spec"""
@@ -606,7 +636,7 @@ class SolaceSempv2McpServer:
         url = self._prepare_url(broker_config.base_url, tool.path, arguments)
 
         # Prepare query parameters
-        query_params = self._prepare_query_params(tool.parameters, arguments)
+        query_params = self._prepare_query_params_for_tool(tool, arguments)
 
         # Prepare headers
         headers = {"Content-Type": "application/json"}
@@ -625,7 +655,7 @@ class SolaceSempv2McpServer:
 
         # Make the request
         try:
-            response = self._make_request(tool.method, url, params=query_params, headers=headers, json=body, auth=auth)
+            response = self._make_request_for_tool(tool, url, params=query_params, headers=headers, json=body, auth=auth)
             return response
         except Exception as e:
             logger.error(f"API request failed: {e}")
@@ -639,10 +669,28 @@ class SolaceSempv2McpServer:
         # Replace path parameters
         for arg_name, arg_value in arguments.items():
             placeholder = f"{{{arg_name}}}"
+            replacement_value = str(arg_value)
+            if arg_name in ['queueName', 'clientName', 'msgVpnName', 'topicEndpointName', 'subscriptionName']:
+                replacement_value= quote(str(arg_value), safe='\'')
             if placeholder in url:
-                url = url.replace(placeholder, str(arg_value))
+                url = url.replace(placeholder, replacement_value)
 
         return url
+
+    def _prepare_query_params_for_tool(self, tool: Tool, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract query parameters from arguments based on parameter definitions"""
+        query_params = {}
+        parameters = tool.parameters
+        allowed_args = tool.response_properties
+        for param in parameters:
+            if param.get('in') == 'query':
+                param_name = param.get('name')
+                if param_name in arguments:
+                    match = [arg for arg in arguments[param_name] if arg in allowed_args] if allowed_args else None
+                    if match:
+                        query_params[param_name] = _flatten_list(match)
+
+        return query_params
 
     def _prepare_query_params(self, parameters: List[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Extract query parameters from arguments based on parameter definitions"""
@@ -656,6 +704,12 @@ class SolaceSempv2McpServer:
 
         return query_params
 
+    def _make_request_for_tool(self, tool: Tool, url: str, params=None, headers=None, json=None, auth=None):
+        """Intermediate function to urlencode the parameter values"""
+        method = tool.method
+        query = urlencode(params, safe=',') if params else ''
+        return self._make_request(method, f"{url}?{query}", params, headers, json, auth)
+
     def _make_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
         """Make an HTTP request to the API"""
         logger.info(f"Making {method} request to {url}")
@@ -663,6 +717,7 @@ class SolaceSempv2McpServer:
         # Debug information - log all parameters
         logger.debug(f"Request details for {method} {url}:")
 
+        # Debug information - Log each header parameter with special handling for sensitive data
         # Log each parameter with special handling for sensitive data
         for param_name, param_value in kwargs.items():
             if param_name == 'auth':

@@ -289,6 +289,14 @@
           ],
           "type": "string"
         },
+        "authRequiredAccessLevelGatherDiagnostics": {
+          "description": "The access level required to generate encrypted gather-diagnostics output, which can only be decrypted by Solace support. global/admin is always required to generate unencrypted gather-diagnostics output. Gather-diagnostics output may contain sensitive information.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n The allowed values and their meaning are:\n\n<pre>\n\"global-read-only\" - Generating encrypted gather-diagnostics output requires global/read-only.\n\"global-admin\" - Generating encrypted gather-diagnostics output requires global/admin.\n</pre>\n Available since 2.48.",
+          "enum": [
+            "global-read-only",
+            "global-admin"
+          ],
+          "type": "string"
+        },
         "averageBindRequestRate": {
           "description": "The one minute average of the bind request rate received by the Broker, in binds per second (binds/sec).\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". Available since 2.25.",
           "format": "int64",
@@ -340,16 +348,16 @@
           "type": "integer"
         },
         "configSyncAuthenticationClientCertMaxChainDepth": {
-          "description": "The maximum depth for a client certificate chain. The depth of a chain is defined as the number of signing CA certificates that are present in the chain back to a trusted self-signed root CA certificate.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Available since 2.22.",
+          "description": "The maximum depth for a client certificate chain. The depth of a chain is defined as the number of signing CA certificates that are present in the chain back to a trusted self-signed root CA certificate.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. Client certificate authentication is deprecated for config-sync.",
           "format": "int64",
           "type": "integer"
         },
         "configSyncAuthenticationClientCertValidateDateEnabled": {
-          "description": "Enable or disable validation of the \"Not Before\" and \"Not After\" validity dates in the authentication certificate(s).\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Available since 2.22.",
+          "description": "Enable or disable validation of the \"Not Before\" and \"Not After\" validity dates in the authentication certificate(s).\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. Client certificate authentication is deprecated for config-sync.",
           "type": "boolean"
         },
         "configSyncClientProfileTcpInitialCongestionWindow": {
-          "description": "The TCP initial congestion window size for Config Sync clients, in multiples of the TCP Maximum Segment Size (MSS). Changing the value from its default of 2 results in non-compliance with RFC 2581. Contact support before changing this value.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Available since 2.22.",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -369,7 +377,7 @@
           "type": "integer"
         },
         "configSyncClientProfileTcpMaxWindow": {
-          "description": "The TCP maximum window size for clients using the Client Profile, in kilobytes. Changes are applied to all existing connections. This setting is ignored on the software broker.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Available since 2.22.",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -775,39 +783,39 @@
           "type": "boolean"
         },
         "tlsCipherSuiteManagementDefaultList": {
-          "description": "The colon-separated list of default cipher suites for TLS management connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
+          "description": "The colon-separated list of default cipher suites for TLS management connections when using TLS 1.2 and lower.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
           "type": "string"
         },
         "tlsCipherSuiteManagementList": {
-          "description": "The colon-separated list of cipher suites used for TLS management connections (e.g. SEMP, LDAP). The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "The colon-separated list of cipher suites used for TLS management connections (e.g. SEMP, LDAP) when using TLS 1.2 and lower. The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
         },
         "tlsCipherSuiteManagementSupportedList": {
-          "description": "The colon-separated list of supported cipher suites for TLS management connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
+          "description": "The colon-separated list of supported cipher suites for TLS management connections when using TLS 1.2 and lower.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
           "type": "string"
         },
         "tlsCipherSuiteMsgBackboneDefaultList": {
-          "description": "The colon-separated list of default cipher suites for TLS data connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
+          "description": "The colon-separated list of default cipher suites for TLS data connections when using TLS 1.2 and lower.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
           "type": "string"
         },
         "tlsCipherSuiteMsgBackboneList": {
-          "description": "The colon-separated list of cipher suites used for TLS data connections (e.g. client pub/sub). The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "The colon-separated list of cipher suites used for TLS data connections (e.g. client pub/sub) when using TLS 1.2 and lower. The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
         },
         "tlsCipherSuiteMsgBackboneSupportedList": {
-          "description": "The colon-separated list of supported cipher suites for TLS data connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
+          "description": "The colon-separated list of supported cipher suites for TLS data connections when using TLS 1.2 and lower.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
           "type": "string"
         },
         "tlsCipherSuiteSecureShellDefaultList": {
-          "description": "The colon-separated list of default cipher suites for TLS secure shell connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
+          "description": "The colon-separated list of default cipher suites for secure shell connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
           "type": "string"
         },
         "tlsCipherSuiteSecureShellList": {
-          "description": "The colon-separated list of cipher suites used for TLS secure shell connections (e.g. SSH, SFTP, SCP). The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "The colon-separated list of cipher suites used for secure shell connections (e.g. SSH, SFTP, SCP). The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
         },
         "tlsCipherSuiteSecureShellSupportedList": {
-          "description": "The colon-separated list of supported cipher suites for TLS secure shell connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
+          "description": "The colon-separated list of supported cipher suites for secure shell connections.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
           "type": "string"
         },
         "tlsCrimeExploitProtectionEnabled": {
@@ -2099,7 +2107,7 @@
           "type": "string"
         },
         "subscriptionDbBuildPercentage": {
-          "description": "Cluster Subscription Database build completion percentage.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". Available since 2.20.",
+          "description": "Gateway Database build completion percentage.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". Available since 2.20.",
           "format": "int64",
           "type": "integer"
         },
@@ -2451,6 +2459,9 @@
         "links": {
           "$ref": "#/definitions/DmrClusterCollectionsLinks"
         },
+        "syncRouterNames": {
+          "$ref": "#/definitions/DmrClusterCollectionsSyncRouterNames"
+        },
         "topologyIssues": {
           "$ref": "#/definitions/DmrClusterCollectionsTopologyIssues"
         }
@@ -2471,6 +2482,16 @@
       "properties": {
         "count": {
           "description": "The total number of objects in the links collection.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "DmrClusterCollectionsSyncRouterNames": {
+      "properties": {
+        "count": {
+          "description": "The total number of objects in the syncRouterNames collection. Available since 2.47.",
           "format": "int64",
           "type": "integer"
         }
@@ -2556,7 +2577,7 @@
           "type": "integer"
         },
         "clientProfileTcpCongestionWindowSize": {
-          "description": "The TCP initial congestion window size, in multiples of the TCP Maximum Segment Size (MSS). Changing the value from its default of 2 results in non-compliance with RFC 2581. Contact support before changing this value.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -2581,7 +2602,7 @@
           "type": "integer"
         },
         "clientProfileTcpMaxWindowSize": {
-          "description": "The TCP maximum window size, in kilobytes. Changes are applied to all existing connections. This setting is ignored on the software broker.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -3188,6 +3209,10 @@
           "description": "The URI of this Cluster's collection of Link objects.",
           "type": "string"
         },
+        "syncRouterNamesUri": {
+          "description": "The URI of this Cluster's collection of RouterName objects. Available since 2.47.",
+          "type": "string"
+        },
         "topologyIssuesUri": {
           "description": "The URI of this Cluster's collection of Cluster Topology Issue objects.",
           "type": "string"
@@ -3238,6 +3263,81 @@
         },
         "links": {
           "$ref": "#/definitions/DmrClusterLinks"
+        },
+        "meta": {
+          "$ref": "#/definitions/SempMeta"
+        }
+      },
+      "required": [
+        "meta"
+      ],
+      "type": "object"
+    },
+    "DmrClusterSyncRouterName": {
+      "properties": {
+        "dmrClusterName": {
+          "description": "The name of the Cluster.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
+          "type": "string"
+        },
+        "routerName": {
+          "description": "The RouterName.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DmrClusterSyncRouterNameCollections": {
+      "properties": {},
+      "type": "object"
+    },
+    "DmrClusterSyncRouterNameLinks": {
+      "properties": {
+        "uri": {
+          "description": "The URI of this RouterName object.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DmrClusterSyncRouterNameResponse": {
+      "properties": {
+        "collections": {
+          "$ref": "#/definitions/DmrClusterSyncRouterNameCollections"
+        },
+        "data": {
+          "$ref": "#/definitions/DmrClusterSyncRouterName"
+        },
+        "links": {
+          "$ref": "#/definitions/DmrClusterSyncRouterNameLinks"
+        },
+        "meta": {
+          "$ref": "#/definitions/SempMeta"
+        }
+      },
+      "required": [
+        "meta"
+      ],
+      "type": "object"
+    },
+    "DmrClusterSyncRouterNamesResponse": {
+      "properties": {
+        "collections": {
+          "items": {
+            "$ref": "#/definitions/DmrClusterSyncRouterNameCollections"
+          },
+          "type": "array"
+        },
+        "data": {
+          "items": {
+            "$ref": "#/definitions/DmrClusterSyncRouterName"
+          },
+          "type": "array"
+        },
+        "links": {
+          "items": {
+            "$ref": "#/definitions/DmrClusterSyncRouterNameLinks"
+          },
+          "type": "array"
         },
         "meta": {
           "$ref": "#/definitions/SempMeta"
@@ -3456,7 +3556,7 @@
           "type": "string"
         },
         "authenticationClientCertAllowApiProvidedUsernameEnabled": {
-          "description": "Enable or disable allowing an incoming client connection to specify a Client Username via the API connect method. When disabled, the certificate CN (Common Name) is always used.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Enable or disable allowing an incoming client connection to specify a Client Username via the API connect method. When disabled, the system will use the configured username source settings to determine which client username will be used.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "boolean"
         },
         "authenticationClientCertCertificateMatchingRulesEnabled": {
@@ -6586,10 +6686,11 @@
           "type": "string"
         },
         "remoteAuthenticationScheme": {
-          "description": "The authentication scheme for the remote Message VPN.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n The allowed values and their meaning are:\n\n<pre>\n\"basic\" - Basic Authentication Scheme (via username and password).\n\"client-certificate\" - Client Certificate Authentication Scheme (via certificate file or content).\n</pre>\n",
+          "description": "The authentication scheme for the remote Message VPN.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n The allowed values and their meaning are:\n\n<pre>\n\"basic\" - Basic Authentication Scheme (via username and password).\n\"client-certificate\" - Client Certificate Authentication Scheme (via certificate file or content).\n\"tls-psk\" - This authentication scheme is used internally by the broker. It cannot be directly configured by a user.\n</pre>\n",
           "enum": [
             "basic",
-            "client-certificate"
+            "client-certificate",
+            "tls-psk"
           ],
           "type": "string"
         },
@@ -6652,11 +6753,11 @@
           "type": "integer"
         },
         "tlsCipherSuiteList": {
-          "description": "The colon-separated list of cipher suites supported for TLS connections to the remote Message VPN. The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "The colon-separated list of cipher suites supported for TLS connections to the remote Message VPN when using TLS 1.2 and lower. The value \"default\" implies all supported suites ordered from most secure to least secure.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
         },
         "tlsDefaultCipherSuiteList": {
-          "description": "Indicates whether the Bridge is configured to use the default cipher-suite list.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
+          "description": "Indicates whether the Bridge is configured to use the default cipher-suite list when using TLS 1.2 and lower.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
           "type": "boolean"
         },
         "ttlExceededEventRaised": {
@@ -8808,7 +8909,7 @@
           "type": "integer"
         },
         "tcpCongestionWindowSize": {
-          "description": "The TCP initial congestion window size for clients using the Client Profile, in multiples of the TCP Maximum Segment Size (MSS). Changing the value from its default of 2 results in non-compliance with RFC 2581. Contact support before changing this value.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -8833,7 +8934,7 @@
           "type": "integer"
         },
         "tcpMaxWindowSize": {
-          "description": "The TCP maximum window size for clients using the Client Profile, in kilobytes. Changes are applied to all existing connections. This setting is ignored on the software broker.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -17958,6 +18059,10 @@
           "description": "The name of the proxy to use. Leave empty for no proxy.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Available since 2.36.",
           "type": "string"
         },
+        "rejectedStatusCodeList": {
+          "description": "Comma-separated list of HTTP status codes or status code ranges which should be processed as a \"rejected\" (do not retry) outcome.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Available since 2.47.",
+          "type": "string"
+        },
         "remoteHost": {
           "description": "The IP address or DNS name to which the broker is to connect to deliver messages for the REST Consumer. A host value must be configured for the REST Consumer to be operationally up.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
@@ -17986,7 +18091,7 @@
           "type": "integer"
         },
         "tlsCipherSuiteList": {
-          "description": "The colon-separated list of cipher suites the REST Consumer uses in its encrypted connection. The value `\"default\"` implies all supported suites ordered from most secure to least secure. The list of default cipher suites is available in the `tlsCipherSuiteMsgBackboneDefaultList` attribute of the Broker object in the Monitoring API. The REST Consumer should choose the first suite from this list that it supports.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "The colon-separated list of cipher suites the REST Consumer uses in its encrypted connection when using TLS 1.2 and lower. The value `\"default\"` implies all supported suites ordered from most secure to least secure. The list of default cipher suites is available in the `tlsCipherSuiteMsgBackboneDefaultList` attribute of the Broker object in the Monitoring API. The REST Consumer should choose the first suite from this list that it supports.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
         },
         "tlsEnabled": {
@@ -18402,7 +18507,7 @@
           "type": "integer"
         },
         "receiverTcpCongestionWindowSize": {
-          "description": "The TCP initial congestion window size for clients using the Client Profile, in multiples of the TCP Maximum Segment Size (MSS). Changing the value from its default of 2 results in non-compliance with RFC 2581. Contact support before changing this value.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -18427,7 +18532,7 @@
           "type": "integer"
         },
         "receiverTcpMaxWindowSize": {
-          "description": "The TCP maximum window size for clients using the Client Profile, in kilobytes. Changes are applied to all existing connections. This setting is ignored on the software broker.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
+          "description": "Obsolete.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n Deprecated since 2.48. The value is now ignored.",
           "format": "int64",
           "type": "integer"
         },
@@ -19111,7 +19216,7 @@
           "type": "integer"
         },
         "maxEffectiveBindCount": {
-          "description": "The effective maximum number of consumer flows that can bind to the Topic Endpoint.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\".",
+          "description": "The effective maximum number of consumer flows that can bind to the Topic Endpoint.\n\nThe minimum access scope/level required to retrieve this attribute is \"vpn/read-only\". Deprecated since 2.47. This attribute has been deprecated. The effective maximum bind count now always matches the configured bind count. Use maxBindCount as a replacement.",
           "format": "int32",
           "type": "integer"
         },
@@ -20651,6 +20756,23 @@
           "description": "Indicates whether the profile is active. An enabled profile may not be active if discovery is not complete, if there is no issuer specified, or if there is another profile with the same issuer.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". Available since 2.26.",
           "type": "boolean"
         },
+        "authenticationClientCertConfigTime": {
+          "description": "The timestamp of when the client-certificate was configured. This value represents the number of seconds since 1970-01-01 00:00:00 UTC (Unix time).\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". This value represents the number of seconds since 1970-01-01 00:00:00 UTC (Unix time). Available since 2.47.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "authenticationClientCertThumbprint": {
+          "description": "The thumbprint of the client-certificate.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". Available since 2.47.",
+          "type": "string"
+        },
+        "authenticationScheme": {
+          "description": "The authentication scheme for token and introspection requests.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n The allowed values and their meaning are:\n\n<pre>\n\"basic\" - Basic Authentication Scheme (via client id and client secret).\n\"client-certificate\" - Client Certificate Authentication Scheme (via certificate file or content).\n</pre>\n Available since 2.47.",
+          "enum": [
+            "basic",
+            "client-certificate"
+          ],
+          "type": "string"
+        },
         "clientId": {
           "description": "The OAuth client id.\n\nThe minimum access scope/level required to retrieve this attribute is \"global/read-only\". (This description is taken from the corresponding attribute in the configuration API.)\n\n",
           "type": "string"
@@ -22116,7 +22238,7 @@
     "SempMeta": {
       "properties": {
         "count": {
-          "description": "The total number of objects requested, irrespective of page size. This may be a count of all objects in a collection or a filtered subset. It represents a snapshot in time and may change when paging through results.",
+          "description": "The total number of objects requested, irrespective of page size. This may be a count of all objects in a collection or a filtered subset. It represents a snapshot in time and may change when paging through results.\n\nThis attribute is only supported for [specific collections](https://docs.solace.com/Admin/SEMP/SEMP-Features.htm#retrieving-the-number-of-objects-in-a-collection).",
           "format": "int64",
           "type": "integer"
         },
@@ -22434,7 +22556,7 @@
     },
     "description": "SEMP (starting in `v2`) is a RESTful API for configuring, monitoring, and administering a Solace PubSub+ broker. This specification defines the following API:\n\n\nAPI|Base Path|Purpose\n:---|:---|:---\nMonitoring|/SEMP/v2/monitor|Querying operational state\n\n\n\nThe following APIs are also available:\n\n\nAPI|Base Path|Purpose\n:---|:---|:---\nAction|/SEMP/v2/action|Performing actions\nConfiguration|/SEMP/v2/config|Reading and writing configuration\n\n\n\nFor tutorials, architectural and protocol design documentation, and other information about the SEMP API, consult the [SEMP documentation](https://docs.solace.com/Admin/SEMP/Using-SEMP.htm) on the Solace website. The SEMP API specifications are also [available for download](https://solace.com/downloads/).\n\nIf you need additional support, please contact us at [support@solace.com](mailto:support@solace.com).",
     "title": "SEMP (Solace Element Management Protocol)",
-    "version": "2.46"
+    "version": "2.48"
   },
   "parameters": {
     "countQuery": {
@@ -22479,7 +22601,7 @@
   "paths": {
     "/": {
       "get": {
-        "description": "Get a Broker object.\n\nThis object contains global configuration for the message broker.\n\n\nAttribute|Deprecated\n:---|:---:\ntlsTicketLifetime|x\n\n\n\nThe minimum access scope/level required to perform this operation is determined by the attributes retrieved.\n\nThis has been available since 2.13.",
+        "description": "Get a Broker object.\n\nThis object contains global configuration for the message broker.\n\n\nAttribute|Deprecated\n:---|:---:\nconfigSyncAuthenticationClientCertMaxChainDepth|x\nconfigSyncAuthenticationClientCertValidateDateEnabled|x\nconfigSyncClientProfileTcpInitialCongestionWindow|x\nconfigSyncClientProfileTcpMaxWindow|x\ntlsTicketLifetime|x\n\n\n\nThe minimum access scope/level required to perform this operation is determined by the attributes retrieved.\n\nThis has been available since 2.13.",
         "operationId": "getBroker",
         "parameters": [
           {
@@ -23647,7 +23769,7 @@
     },
     "/dmrClusters/{dmrClusterName}/links": {
       "get": {
-        "description": "Get a list of Link objects.\n\nA Link connects nodes (either within a Cluster or between two different Clusters) and allows them to exchange topology information, subscriptions and data.\n\n\nAttribute|Identifying\n:---|:---:\ndmrClusterName|x\nremoteNodeName|x\n\n\n\nThe minimum access scope/level required to perform this operation is \"global/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.11.",
+        "description": "Get a list of Link objects.\n\nA Link connects nodes (either within a Cluster or between two different Clusters) and allows them to exchange topology information, subscriptions and data.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nclientProfileTcpCongestionWindowSize||x\nclientProfileTcpMaxWindowSize||x\ndmrClusterName|x|\nremoteNodeName|x|\n\n\n\nThe minimum access scope/level required to perform this operation is \"global/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.11.",
         "operationId": "getDmrClusterLinks",
         "parameters": [
           {
@@ -23701,7 +23823,7 @@
     },
     "/dmrClusters/{dmrClusterName}/links/{remoteNodeName}": {
       "get": {
-        "description": "Get a Link object.\n\nA Link connects nodes (either within a Cluster or between two different Clusters) and allows them to exchange topology information, subscriptions and data.\n\n\nAttribute|Identifying\n:---|:---:\ndmrClusterName|x\nremoteNodeName|x\n\n\n\nThe minimum access scope/level required to perform this operation is \"global/read-only\".\n\nThis has been available since 2.11.",
+        "description": "Get a Link object.\n\nA Link connects nodes (either within a Cluster or between two different Clusters) and allows them to exchange topology information, subscriptions and data.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nclientProfileTcpCongestionWindowSize||x\nclientProfileTcpMaxWindowSize||x\ndmrClusterName|x|\nremoteNodeName|x|\n\n\n\nThe minimum access scope/level required to perform this operation is \"global/read-only\".\n\nThis has been available since 2.11.",
         "operationId": "getDmrClusterLink",
         "parameters": [
           {
@@ -24222,6 +24344,112 @@
           }
         ],
         "summary": "Get a Trusted Common Name object.",
+        "tags": [
+          "all",
+          "dmrCluster"
+        ]
+      }
+    },
+    "/dmrClusters/{dmrClusterName}/syncRouterNames": {
+      "get": {
+        "description": "Get a list of RouterName objects.\n\nRouterNames which are in the process of doing Cluster Sync.\n\n\nAttribute|Identifying\n:---|:---:\ndmrClusterName|x\nrouterName|x\n\n\n\nThe minimum access scope/level required to perform this operation is \"global/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 500.\n\nThis has been available since 2.47.",
+        "operationId": "getDmrClusterSyncRouterNames",
+        "parameters": [
+          {
+            "description": "The name of the Cluster.",
+            "in": "path",
+            "name": "dmrClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/countQuery"
+          },
+          {
+            "$ref": "#/parameters/cursorQuery"
+          },
+          {
+            "$ref": "#/parameters/whereQuery"
+          },
+          {
+            "$ref": "#/parameters/selectQuery"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of RouterName objects' attributes, and the request metadata.",
+            "schema": {
+              "$ref": "#/definitions/DmrClusterSyncRouterNamesResponse"
+            }
+          },
+          "default": {
+            "description": "The error response.",
+            "schema": {
+              "$ref": "#/definitions/SempMetaOnlyResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Get a list of RouterName objects.",
+        "tags": [
+          "all",
+          "dmrCluster"
+        ]
+      }
+    },
+    "/dmrClusters/{dmrClusterName}/syncRouterNames/{routerName}": {
+      "get": {
+        "description": "Get a RouterName object.\n\nRouterNames which are in the process of doing Cluster Sync.\n\n\nAttribute|Identifying\n:---|:---:\ndmrClusterName|x\nrouterName|x\n\n\n\nThe minimum access scope/level required to perform this operation is \"global/read-only\".\n\nThis has been available since 2.47.",
+        "operationId": "getDmrClusterSyncRouterName",
+        "parameters": [
+          {
+            "description": "The name of the Cluster.",
+            "in": "path",
+            "name": "dmrClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "The RouterName.",
+            "in": "path",
+            "name": "routerName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/selectQuery"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The RouterName object's attributes, and the request metadata.",
+            "schema": {
+              "$ref": "#/definitions/DmrClusterSyncRouterNameResponse"
+            }
+          },
+          "default": {
+            "description": "The error response.",
+            "schema": {
+              "$ref": "#/definitions/SempMetaOnlyResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Get a RouterName object.",
         "tags": [
           "all",
           "dmrCluster"
@@ -27092,7 +27320,7 @@
     },
     "/msgVpns/{msgVpnName}/clientProfiles": {
       "get": {
-        "description": "Get a list of Client Profile objects.\n\nClient Profiles are used to assign common configuration properties to clients that have been successfully authorized.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nallowCutThroughForwardingEnabled||x\napiQueueManagementCopyFromOnCreateName||x\napiTopicEndpointManagementCopyFromOnCreateName||x\nclientProfileName|x|\nmsgVpnName|x|\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.11.",
+        "description": "Get a list of Client Profile objects.\n\nClient Profiles are used to assign common configuration properties to clients that have been successfully authorized.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nallowCutThroughForwardingEnabled||x\napiQueueManagementCopyFromOnCreateName||x\napiTopicEndpointManagementCopyFromOnCreateName||x\nclientProfileName|x|\nmsgVpnName|x|\ntcpCongestionWindowSize||x\ntcpMaxWindowSize||x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.11.",
         "operationId": "getMsgVpnClientProfiles",
         "parameters": [
           {
@@ -27147,7 +27375,7 @@
     },
     "/msgVpns/{msgVpnName}/clientProfiles/{clientProfileName}": {
       "get": {
-        "description": "Get a Client Profile object.\n\nClient Profiles are used to assign common configuration properties to clients that have been successfully authorized.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nallowCutThroughForwardingEnabled||x\napiQueueManagementCopyFromOnCreateName||x\napiTopicEndpointManagementCopyFromOnCreateName||x\nclientProfileName|x|\nmsgVpnName|x|\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThis has been available since 2.11.",
+        "description": "Get a Client Profile object.\n\nClient Profiles are used to assign common configuration properties to clients that have been successfully authorized.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nallowCutThroughForwardingEnabled||x\napiQueueManagementCopyFromOnCreateName||x\napiTopicEndpointManagementCopyFromOnCreateName||x\nclientProfileName|x|\nmsgVpnName|x|\ntcpCongestionWindowSize||x\ntcpMaxWindowSize||x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThis has been available since 2.11.",
         "operationId": "getMsgVpnClientProfile",
         "parameters": [
           {
@@ -33270,7 +33498,7 @@
     },
     "/msgVpns/{msgVpnName}/telemetryProfiles": {
       "get": {
-        "description": "Get a list of Telemetry Profile objects.\n\nUsing the Telemetry Profile allows trace spans to be generated as messages are processed by the broker. The generated spans are stored persistently on the broker and may be consumed by the Solace receiver component of an OpenTelemetry Collector.\n\n\nAttribute|Identifying\n:---|:---:\nmsgVpnName|x\ntelemetryProfileName|x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.31.",
+        "description": "Get a list of Telemetry Profile objects.\n\nUsing the Telemetry Profile allows trace spans to be generated as messages are processed by the broker. The generated spans are stored persistently on the broker and may be consumed by the Solace receiver component of an OpenTelemetry Collector.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nmsgVpnName|x|\nreceiverTcpCongestionWindowSize||x\nreceiverTcpMaxWindowSize||x\ntelemetryProfileName|x|\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.31.",
         "operationId": "getMsgVpnTelemetryProfiles",
         "parameters": [
           {
@@ -33325,7 +33553,7 @@
     },
     "/msgVpns/{msgVpnName}/telemetryProfiles/{telemetryProfileName}": {
       "get": {
-        "description": "Get a Telemetry Profile object.\n\nUsing the Telemetry Profile allows trace spans to be generated as messages are processed by the broker. The generated spans are stored persistently on the broker and may be consumed by the Solace receiver component of an OpenTelemetry Collector.\n\n\nAttribute|Identifying\n:---|:---:\nmsgVpnName|x\ntelemetryProfileName|x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThis has been available since 2.31.",
+        "description": "Get a Telemetry Profile object.\n\nUsing the Telemetry Profile allows trace spans to be generated as messages are processed by the broker. The generated spans are stored persistently on the broker and may be consumed by the Solace receiver component of an OpenTelemetry Collector.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nmsgVpnName|x|\nreceiverTcpCongestionWindowSize||x\nreceiverTcpMaxWindowSize||x\ntelemetryProfileName|x|\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThis has been available since 2.31.",
         "operationId": "getMsgVpnTelemetryProfile",
         "parameters": [
           {
@@ -33873,7 +34101,7 @@
     },
     "/msgVpns/{msgVpnName}/topicEndpoints": {
       "get": {
-        "description": "Get a list of Topic Endpoint objects.\n\nA Topic Endpoint attracts messages published to a topic for which the Topic Endpoint has a matching topic subscription. The topic subscription for the Topic Endpoint is specified in the client request to bind a Flow to that Topic Endpoint. Queues are significantly more flexible than Topic Endpoints and are the recommended approach for most applications. The use of Topic Endpoints should be restricted to JMS applications.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nmsgVpnName|x|\ntopicEndpointName|x|\nvirtualRouter||x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.12.",
+        "description": "Get a list of Topic Endpoint objects.\n\nA Topic Endpoint attracts messages published to a topic for which the Topic Endpoint has a matching topic subscription. The topic subscription for the Topic Endpoint is specified in the client request to bind a Flow to that Topic Endpoint. Queues are significantly more flexible than Topic Endpoints and are the recommended approach for most applications. The use of Topic Endpoints should be restricted to JMS applications.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nmaxEffectiveBindCount||x\nmsgVpnName|x|\ntopicEndpointName|x|\nvirtualRouter||x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThe maximum number of objects that can be returned in a single page is 100.\n\nThis has been available since 2.12.",
         "operationId": "getMsgVpnTopicEndpoints",
         "parameters": [
           {
@@ -33928,7 +34156,7 @@
     },
     "/msgVpns/{msgVpnName}/topicEndpoints/{topicEndpointName}": {
       "get": {
-        "description": "Get a Topic Endpoint object.\n\nA Topic Endpoint attracts messages published to a topic for which the Topic Endpoint has a matching topic subscription. The topic subscription for the Topic Endpoint is specified in the client request to bind a Flow to that Topic Endpoint. Queues are significantly more flexible than Topic Endpoints and are the recommended approach for most applications. The use of Topic Endpoints should be restricted to JMS applications.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nmsgVpnName|x|\ntopicEndpointName|x|\nvirtualRouter||x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThis has been available since 2.12.",
+        "description": "Get a Topic Endpoint object.\n\nA Topic Endpoint attracts messages published to a topic for which the Topic Endpoint has a matching topic subscription. The topic subscription for the Topic Endpoint is specified in the client request to bind a Flow to that Topic Endpoint. Queues are significantly more flexible than Topic Endpoints and are the recommended approach for most applications. The use of Topic Endpoints should be restricted to JMS applications.\n\n\nAttribute|Identifying|Deprecated\n:---|:---:|:---:\nmaxEffectiveBindCount||x\nmsgVpnName|x|\ntopicEndpointName|x|\nvirtualRouter||x\n\n\n\nThe minimum access scope/level required to perform this operation is \"vpn/read-only\".\n\nThis has been available since 2.12.",
         "operationId": "getMsgVpnTopicEndpoint",
         "parameters": [
           {
