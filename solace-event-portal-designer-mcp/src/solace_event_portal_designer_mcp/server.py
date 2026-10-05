@@ -113,6 +113,8 @@ def main():
             RouteMap(pattern=r"^/api/v2/architecture/eventVersions(/\{id\})?$", mcp_type=MCPType.TOOL),
             RouteMap(pattern=r"^/api/v2/architecture/schemaVersions(/\{id\})?$", mcp_type=MCPType.TOOL),
             RouteMap(pattern=r"^/api/v2/architecture/schemas(/\{id\})?$", mcp_type=MCPType.TOOL),
+            RouteMap(pattern=r"^/api/v2/architecture/consumers(/\{id\})?$", mcp_type=MCPType.TOOL),
+            RouteMap(pattern=r"^/api/v2/architecture/designer/configuration/solaceQueues(/\{id\})?$", mcp_type=MCPType.TOOL),
             RouteMap(mcp_type=MCPType.EXCLUDE)
         ],
         mcp_component_fn=customize_components,
