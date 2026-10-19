@@ -1,4 +1,4 @@
-# Solace Monitoring MCP Server (retired)
+# Solace Monitoring MCP Server (deprecated)
 
 This server has been removed from this repository and is no longer maintained.
 
