@@ -34,9 +34,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/SolaceLabs/solace-platform-mcp"
-Repository = "https://github.com/SolaceLabs/solace-platform-mcp"
-Issues = "https://github.com/SolaceLabs/solace-platform-mcp/issues"
+Homepage = "https://github.com/SolaceProducts/solace-platform-mcp"
+Repository = "https://github.com/SolaceProducts/solace-platform-mcp"
+Issues = "https://github.com/SolaceProducts/solace-platform-mcp/issues"
 
 [project.scripts]
 solace-ep-designer-mcp = "solace_event_portal_designer_mcp.server:main"
