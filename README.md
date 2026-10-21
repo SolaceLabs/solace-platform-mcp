@@ -20,6 +20,10 @@ Each MCP server has its own installation and configuration steps that are availa
 
 The Solace Monitoring MCP Server is deprecated and no longer maintained. Use the [Solace Broker MCP Server](https://github.com/SolaceProducts/solace-broker-mcp) instead. See [solace-monitoring-mcp-server](solace-monitoring-mcp-server/) for details.
 
+## Disclaimer
+
+MCP servers are used by AI applications that run on large language models (LLMs), which are non-deterministic and may change over time. Results can vary between runs and may be incorrect, insecure, incomplete, or unsuitable for your environment. Some MCP servers can create, update, or delete resources. You are responsible for reviewing, testing, and validating all results and actions before use, especially in production environments.
+
 ## Contributing
 
 To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md). Thanks to everyone who has [contributed](https://github.com/SolaceLabs/solace-platform-mcp/graphs/contributors) to this project.
