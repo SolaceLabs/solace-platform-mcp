@@ -12,7 +12,7 @@ You can choose the MCP servers based on the Solace products you work with:
 | Server | What it does | Availability | Support |
 |---|---|---|---|
 | [Solace Broker MCP Server](https://github.com/SolaceProducts/solace-broker-mcp) | Monitors and manages Solace event brokers | Generally available (GA) | Supported by Solace |
-| [Solace Event Portal Designer MCP Server](solace-event-portal-designer-mcp/) | Reads, creates, updates and deletes Event Portal Designer objects (application domains, applications, events, schemas) and exports AsyncAPI specifications, from your AI application | Early Access (EA) | The Event Portal team takes feedback and bug reports through [GitHub issues](https://github.com/SolaceLabs/solace-platform-mcp/issues) |
+| [Solace Event Portal Designer MCP Server](solace-event-portal-designer-mcp/) | Reads, creates, updates and deletes Event Portal Designer objects (application domains, applications, events, schemas) and exports AsyncAPI specifications, from your AI application | Early Access (EA) | The Event Portal team takes feedback and bug reports through [GitHub issues](https://github.com/SolaceProducts/solace-platform-mcp/issues) |
 
 Each MCP server has its own installation and configuration steps that are available in its README file.
 
@@ -26,7 +26,7 @@ MCP servers are used by AI applications that run on large language models (LLMs)
 
 ## Contributing
 
-To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md). Thanks to everyone who has [contributed](https://github.com/SolaceLabs/solace-platform-mcp/graphs/contributors) to this project.
+To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md). Thanks to everyone who has [contributed](https://github.com/SolaceProducts/solace-platform-mcp/graphs/contributors) to this project.
 
 ## License
 
