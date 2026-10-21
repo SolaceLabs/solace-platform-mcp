@@ -1,7 +1,8 @@
 version: 3
 
 project:
-  locator: custom+48578/github.com/SolaceLabs/solace-platform-mcp
+  locator: SolaceProducts_solace-platform-mcp
+  id: SolaceProducts_solace-platform-mcp
   name: solace-platform-mcp
   teams: []
   labels:
