@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   sca_scan:
-    uses: SolaceDev/solace-public-workflows/.github/workflows/sca-scan-and-guard.yaml@main
+    uses: SolaceDev/solace-public-workflows/.github/workflows/sca-scan-and-guard.yaml@fc6b754ed479d41f34a392c39d23b9853e130cbb # main
     with:
       setup_actions: '["setup-uv"]'
     secrets:
